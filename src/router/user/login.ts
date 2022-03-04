@@ -1,7 +1,8 @@
+import config from './../../config'
 /*
  * @Author: litfa
  * @Date: 2022-03-01 10:52:48
- * @LastEditTime: 2022-03-02 18:24:34
+ * @LastEditTime: 2022-03-04 10:09:43
  * @LastEditors: litfa
  * @Description: 登录相关api
  * @FilePath: /blog-service/src/router/user/login.ts
@@ -55,11 +56,26 @@ router.post('/queryLoginStatus', (req, res) => {
   })
 })
 
+import WXBizDataCrypt from '../../utils/wx/WXBizDataCrypt'
+import code2Session from './../../utils/wx/code2Session'
+
 /**
  * @description: 登录
  */
-router.post('/login', (req, res) => {
-  // 
+router.post('/login', async (req, res) => {
+
+  const { code, encryptedData, signature, iv, scene } = req.body
+
+  // 部分场景值下还可以获取来源应用、公众号或小程序的appId。
+  // https://developers.weixin.qq.com/miniprogram/dev/framework/app-service/scene.html
+  if (scene.length == 4) {
+    // 非网页登录
+  }
+
+  // 解析用户信息
+  const { session_key: sessionKey, openid, unionid } = await code2Session(code)
+  const pc = new WXBizDataCrypt(config.wx.appid, sessionKey)
+  const data = pc.decryptData(encryptedData, iv)
 })
 
 export default router
