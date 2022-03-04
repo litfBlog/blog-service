@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-01 20:29:40
- * @LastEditTime: 2022-03-02 10:36:10
+ * @LastEditTime: 2022-03-04 18:13:25
  * @LastEditors: litfa
  * @Description: 获取小程序码 getUnlimited
  * @FilePath: /blog-service/src/utils/wx/getUnlimited.ts
@@ -17,14 +17,15 @@ export default async (code: string) => {
     url: 'https://api.weixin.qq.com/wxa/getwxacodeunlimit',
     responseType: 'arraybuffer',
     data: {
-      scene: code
+      scene: code,
+      page: 'subpkg/login/login',
+      // 测试环境（小程序上线前不检查）上线后修改
+      check_path: false
     },
     params: {
       access_token: await getAccessToken()
     }
   })
-  console.log(typeof res)
-  // Buffer.
 
   return res
 }
