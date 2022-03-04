@@ -1,16 +1,18 @@
-import config from './../../config'
 /*
- * @Author: litfa
- * @Date: 2022-03-01 10:52:48
- * @LastEditTime: 2022-03-04 10:09:43
+* @Author: litfa
+* @Date: 2022-03-01 10:52:48
+ * @LastEditTime: 2022-03-04 16:56:24
  * @LastEditors: litfa
  * @Description: 登录相关api
  * @FilePath: /blog-service/src/router/user/login.ts
- * 
- */
+* 
+*/
+import config from './../../config'
 import express from 'express'
 import getUnlimited from './../../utils/wx/getUnlimited'
 import db from './../../db/index'
+import query from './../../db/query'
+import * as loginQueue from './../../utils/sql/loginQueue'
 const router = express.Router()
 
 /**
@@ -70,12 +72,56 @@ router.post('/login', async (req, res) => {
   // https://developers.weixin.qq.com/miniprogram/dev/framework/app-service/scene.html
   if (scene.length == 4) {
     // 非网页登录
+    // 检查是否注册
+    // 直接返回token
+  } else {
+    console.log(scene)
+
+    const status = await loginQueue.queryStatus(scene)
+    console.log(status)
+
+    if (status == -1) return res.send({ status: 6 })
   }
 
   // 解析用户信息
   const { session_key: sessionKey, openid, unionid } = await code2Session(code)
   const pc = new WXBizDataCrypt(config.wx.appid, sessionKey)
   const data = pc.decryptData(encryptedData, iv)
+  console.log({
+    openid,
+    unionid,
+    username: data.nickName,
+    avatar: data.avatarUrl,
+    registerDate: Date.now()
+  })
+
+  // 查找是否有该用户
+  const { results: user } = await query('select * from users where unionid=?', unionid)
+  if (user?.length == 1) {
+    console.log(user)
+
+    const status = await loginQueue.setStatus(scene, 2, user[0].id)
+    if (status == -1) return res.send({ status: 5 })
+    return res.send({ status: 1, type: 'login' })
+  }
+
+  // 若首次登录 自动注册
+  const { err, results } = await query('insert into users set ?', {
+    openid,
+    unionid,
+    username: data.nickName,
+    avatar: data.avatarUrl,
+    registerDate: Date.now()
+  })
+  // SQL 语句执行成功，但影响行数不为 1
+  if (err || results?.affectedRows !== 1) {
+    return res.send({ status: 5, message: '登录失败，请稍后再试！' })
+  }
+  // 注册成功
+  const status = await loginQueue.setStatus(scene, 2, results[0].id)
+  if (status == -1) return res.send({ status: 5 })
+  res.send({ status: 1, message: '注册成功！', type: 'register' })
+
 })
 
 export default router
