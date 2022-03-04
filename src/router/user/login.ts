@@ -1,7 +1,7 @@
 /*
 * @Author: litfa
 * @Date: 2022-03-01 10:52:48
- * @LastEditTime: 2022-03-04 16:56:24
+ * @LastEditTime: 2022-03-04 17:09:29
  * @LastEditors: litfa
  * @Description: 登录相关api
  * @FilePath: /blog-service/src/router/user/login.ts
@@ -60,6 +60,7 @@ router.post('/queryLoginStatus', (req, res) => {
 
 import WXBizDataCrypt from '../../utils/wx/WXBizDataCrypt'
 import code2Session from './../../utils/wx/code2Session'
+import jwt from 'jsonwebtoken'
 
 /**
  * @description: 登录
