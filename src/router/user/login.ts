@@ -1,7 +1,7 @@
 /*
 * @Author: litfa
 * @Date: 2022-03-01 10:52:48
- * @LastEditTime: 2022-03-04 17:09:29
+ * @LastEditTime: 2022-03-04 17:59:37
  * @LastEditors: litfa
  * @Description: 登录相关api
  * @FilePath: /blog-service/src/router/user/login.ts
@@ -66,23 +66,10 @@ import jwt from 'jsonwebtoken'
  * @description: 登录
  */
 router.post('/login', async (req, res) => {
-
-  const { code, encryptedData, signature, iv, scene } = req.body
-
-  // 部分场景值下还可以获取来源应用、公众号或小程序的appId。
-  // https://developers.weixin.qq.com/miniprogram/dev/framework/app-service/scene.html
-  if (scene.length == 4) {
-    // 非网页登录
-    // 检查是否注册
-    // 直接返回token
-  } else {
-    console.log(scene)
-
-    const status = await loginQueue.queryStatus(scene)
-    console.log(status)
-
-    if (status == -1) return res.send({ status: 6 })
-  }
+  // 获取&处理参数
+  const { code, encryptedData, signature, iv } = req.body
+  let { scene } = req.body
+  scene = scene.toString()
 
   // 解析用户信息
   const { session_key: sessionKey, openid, unionid } = await code2Session(code)
@@ -96,11 +83,29 @@ router.post('/login', async (req, res) => {
     registerDate: Date.now()
   })
 
+  // 部分场景值下还可以获取来源应用、公众号或小程序的appId。
+  // https://developers.weixin.qq.com/miniprogram/dev/framework/app-service/scene.html
+  if (scene.length == 4) {
+    // 非网页登录
+    // 检查是否注册
+    // 直接返回token
+  } else {
+    console.log(scene)
+    const status = await loginQueue.queryStatus(scene)
+    console.log(status)
+
+    if (status == -1) return res.send({ status: 6 })
+  }
+
   // 查找是否有该用户
   const { results: user } = await query('select * from users where unionid=?', unionid)
+  // 找到该用户
   if (user?.length == 1) {
-    console.log(user)
-
+    // 小程序登录 不需要数据库操作 直接登录
+    if (scene.length == 4) {
+      return res.send({ status: 1, type: 'login' })
+    }
+    // 网页登录 更新登录队列
     const status = await loginQueue.setStatus(scene, 2, user[0].id)
     if (status == -1) return res.send({ status: 5 })
     return res.send({ status: 1, type: 'login' })
@@ -119,6 +124,11 @@ router.post('/login', async (req, res) => {
     return res.send({ status: 5, message: '登录失败，请稍后再试！' })
   }
   // 注册成功
+  // 小程序登录 不需要数据库操作 直接登录
+  if (scene.length == 4) {
+    return res.send({ status: 1, type: 'register' })
+  }
+  // 网页登录 更新登录队列
   const status = await loginQueue.setStatus(scene, 2, results[0].id)
   if (status == -1) return res.send({ status: 5 })
   res.send({ status: 1, message: '注册成功！', type: 'register' })
