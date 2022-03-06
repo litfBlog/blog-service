@@ -1,7 +1,7 @@
 /*
 * @Author: litfa
 * @Date: 2022-03-01 10:52:48
- * @LastEditTime: 2022-03-04 17:59:37
+ * @LastEditTime: 2022-03-06 20:35:14
  * @LastEditors: litfa
  * @Description: 登录相关api
  * @FilePath: /blog-service/src/router/user/login.ts
@@ -39,7 +39,13 @@ router.post('/getQRCode', async (req, res) => {
 
   await db.query('select * from loginQueue where code=?', code, async (err, results) => {
     console.log(err, results)
+    // 查询不到
     if (results.length != 1) return res.send({ status: 6 })
+    // 超时
+    if (results[0].date + config.loginTimeout < Date.now()) {
+      return res.send({ staus: 1, loginStatus: 4 })
+    }
+    // 获取图片
     const img = await getUnlimited(code)
 
     res.type('image/jpeg')
@@ -54,7 +60,13 @@ router.post('/queryLoginStatus', (req, res) => {
   const { code } = req.body
   if (!code) return res.send({ status: 4 })
   db.query('select * from loginQueue where code=?', code, async (err, results) => {
-    res.send({ status: 1, loginStatus: results[0].status })
+    // 查询不到
+    if (results.length != 1) return res.send({ status: 1, loginStatus: 6 })
+    // 超时
+    if (results[0].date + config.loginTimeout < Date.now()) {
+      return res.send({ staus: 1, loginStatus: 4 })
+    }
+    res.send({ status: 1, loginStatus: results[0]?.status })
   })
 })
 
