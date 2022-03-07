@@ -1,7 +1,7 @@
 /*
 * @Author: litfa
 * @Date: 2022-03-01 10:52:48
- * @LastEditTime: 2022-03-06 20:35:14
+ * @LastEditTime: 2022-03-07 17:36:10
  * @LastEditors: litfa
  * @Description: 登录相关api
  * @FilePath: /blog-service/src/router/user/login.ts
@@ -13,6 +13,7 @@ import getUnlimited from './../../utils/wx/getUnlimited'
 import db from './../../db/index'
 import query from './../../db/query'
 import * as loginQueue from './../../utils/sql/loginQueue'
+import jwt from './../../utils/token'
 const router = express.Router()
 
 /**
@@ -56,23 +57,30 @@ router.post('/getQRCode', async (req, res) => {
 /**
  * @description: 获取登录状态
  */
-router.post('/queryLoginStatus', (req, res) => {
+router.post('/queryLoginStatus', async (req, res) => {
   const { code } = req.body
   if (!code) return res.send({ status: 4 })
-  db.query('select * from loginQueue where code=?', code, async (err, results) => {
-    // 查询不到
-    if (results.length != 1) return res.send({ status: 1, loginStatus: 6 })
-    // 超时
-    if (results[0].date + config.loginTimeout < Date.now()) {
-      return res.send({ staus: 1, loginStatus: 4 })
-    }
-    res.send({ status: 1, loginStatus: results[0]?.status })
-  })
+
+  const { results, err } = await query('select * from loginQueue where code=?', code)
+  // 查询不到
+  if (results.length != 1) return res.send({ status: 1, loginStatus: 6 })
+  // 超时
+  if (results[0].date + config.loginTimeout < Date.now()) {
+    return res.send({ staus: 1, loginStatus: 4 })
+  }
+  // 查询到id，且登录成功 生成token
+  if (results[0].status == 2) {
+    let token = ''
+    const { results: user } = await query('select * from users where id=?', results[0].userId)
+    console.log(user)
+    token = jwt({ user: user[0] })
+    res.send({ status: 1, loginStatus: results[0]?.status, token })
+  }
+  res.send({ status: 1, loginStatus: results[0]?.status })
 })
 
 import WXBizDataCrypt from '../../utils/wx/WXBizDataCrypt'
 import code2Session from './../../utils/wx/code2Session'
-import jwt from 'jsonwebtoken'
 
 /**
  * @description: 登录
