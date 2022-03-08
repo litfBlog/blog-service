@@ -1,7 +1,7 @@
 /*
 * @Author: litfa
 * @Date: 2022-03-01 10:52:48
- * @LastEditTime: 2022-03-07 17:36:10
+ * @LastEditTime: 2022-03-07 18:23:08
  * @LastEditors: litfa
  * @Description: 登录相关api
  * @FilePath: /blog-service/src/router/user/login.ts
@@ -74,7 +74,7 @@ router.post('/queryLoginStatus', async (req, res) => {
     const { results: user } = await query('select * from users where id=?', results[0].userId)
     console.log(user)
     token = jwt({ user: user[0] })
-    res.send({ status: 1, loginStatus: results[0]?.status, token })
+    return res.send({ status: 1, loginStatus: results[0]?.status, token })
   }
   res.send({ status: 1, loginStatus: results[0]?.status })
 })

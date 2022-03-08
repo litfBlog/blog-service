@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-01 20:29:40
- * @LastEditTime: 2022-03-04 18:13:25
+ * @LastEditTime: 2022-03-08 10:04:56
  * @LastEditors: litfa
  * @Description: 获取小程序码 getUnlimited
  * @FilePath: /blog-service/src/utils/wx/getUnlimited.ts
@@ -20,6 +20,7 @@ export default async (code: string) => {
       scene: code,
       page: 'subpkg/login/login',
       // 测试环境（小程序上线前不检查）上线后修改
+      env_version: 'develop',
       check_path: false
     },
     params: {
