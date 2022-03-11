@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-09 11:33:33
- * @LastEditTime: 2022-03-10 12:04:42
+ * @LastEditTime: 2022-03-11 16:01:46
  * @LastEditors: litfa
  * @Description: 初始化文章
  * @FilePath: /blog-service/src/router/articles/init.ts
@@ -17,20 +17,21 @@ const router = Router()
 router.post('/add', async (req, res) => {
   const uuid = uuidv4()
   const user = req.user as any
+  let err, results
   // 验证唯一性 作者和uuid不能重复
-  const { err: errr, results: queue } = await query('select * from articlesqueue where ? and ? or ? and ?', [
+  [err, results] = await query('select * from articlesqueue where ? and ? or ? and ?', [
     { author: user.id },
     { status: 1 },
     { uuid },
     { status: 1 }
 
   ])
-  console.log(errr, queue)
+  console.log(err, results)
 
-  if (queue?.length >= 1) {
+  if (results?.length >= 1) {
     return res.send({
       status: 5, data:
-        queue[0]
+        results[0]
 
     })
   }
@@ -42,7 +43,7 @@ router.post('/add', async (req, res) => {
     return res.send({ statue: 5 })
   }
   // 插入队列
-  const { err, results } = await query('insert into articlesqueue set ?', {
+  [err, results] = await query('insert into articlesqueue set ?', {
     uuid,
     author: user.id,
     type: 'add',

@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-11 14:28:50
- * @LastEditTime: 2022-03-11 14:48:32
+ * @LastEditTime: 2022-03-11 16:10:30
  * @LastEditors: litfa
  * @Description: 保存草稿
  * @FilePath: /blog-service/src/router/articles/save.ts
@@ -17,7 +17,8 @@ router.post('/', async (req, res) => {
   // uuid错误
   if (!uuid) return res.send({ status: 4 })
   const user = req.user as any
-  const { err, results } = await query('update articlesqueue set ? where ? and ?', [
+  // let err, results
+  const [err, results] = await query('update articlesqueue set ? where ? and ?', [
     {
       title: title || '',
       content: content || '',

@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-11 14:50:51
- * @LastEditTime: 2022-03-11 15:42:42
+ * @LastEditTime: 2022-03-11 16:09:19
  * @LastEditors: litfa
  * @Description: 发布文章
  * @FilePath: /blog-service/src/router/articles/push.ts
@@ -19,28 +19,29 @@ router.post('/', async (req, res) => {
   if (!uuid) return res.send({ status: 4 })
   const user = req.user as any
   // 获取队列
-  const { err: queueErr, results: queue } = await query('select * from articlesqueue where ? and ? and ?', [{ uuid }, { author: user.id }, { status: 1 }])
-  if (queue?.length < 1) {
+  let err, results
+  [err, results] = await query('select * from articlesqueue where ? and ? and ?', [{ uuid }, { author: user.id }, { status: 1 }])
+  if (results?.length < 1) {
     return res.send({ status: 4, msg: '未找到文章' })
   }
   // 验证文章信息
 
   // 发布的文章
-  if (queue[0].type == 'add') {
-    const { err, results } = await query('insert into articles set ?', {
-      type: queue[0].contenttype,
+  if (results[0].type == 'add') {
+    [err, results] = await query('insert into articles set ?', {
+      type: results[0].contenttype,
       uuid,
       id: user.id,
-      title: queue[0].title,
-      content: queue[0].content,
-      cover: queue[0].cover,
+      title: results[0].title,
+      content: results[0].content,
+      cover: results[0].cover,
       status: 0
     })
     await query('update articlesqueue set ? where ? and ?', [{ status: 3 }, { uuid }, { author: user.id }])
     console.log(results, err)
 
     if (!err) return res.send({ status: 1, id: results.insertId })
-  } else if (queue[0].type == 'edit') {
+  } else if (results[0].type == 'edit') {
     // 修改文章
     // 
   }

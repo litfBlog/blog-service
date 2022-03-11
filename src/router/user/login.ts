@@ -1,7 +1,7 @@
 /*
 * @Author: litfa
 * @Date: 2022-03-01 10:52:48
- * @LastEditTime: 2022-03-09 18:04:02
+ * @LastEditTime: 2022-03-11 16:20:47
  * @LastEditors: litfa
  * @Description: 登录相关api
  * @FilePath: /blog-service/src/router/user/login.ts
@@ -60,8 +60,8 @@ router.post('/getQRCode', async (req, res) => {
 router.post('/queryLoginStatus', async (req, res) => {
   const { code } = req.body
   if (!code) return res.send({ status: 4 })
-
-  const { results, err } = await query('select * from loginQueue where code=?', code)
+  // let err, results
+  const [err, results] = await query('select * from loginQueue where code=?', code)
   // 查询不到
   if (results.length != 1) return res.send({ status: 1, loginStatus: 6 })
   // 超时
@@ -118,21 +118,22 @@ router.post('/login', async (req, res) => {
   }
 
   // 查找是否有该用户
-  const { results: user } = await query('select * from users where unionid=?', unionid)
+  let err, results
+  [err, results] = await query('select * from users where unionid=?', unionid)
   // 找到该用户
-  if (user?.length == 1) {
+  if (results?.length == 1) {
     // 小程序登录 不需要数据库操作 直接登录
     if (scene.length == 4) {
       return res.send({ status: 1, type: 'login' })
     }
     // 网页登录 更新登录队列
-    const status = await loginQueue.setStatus(scene, 2, user[0].id)
+    const status = await loginQueue.setStatus(scene, 2, results[0].id)
     if (status == -1) return res.send({ status: 5 })
     return res.send({ status: 1, type: 'login' })
   }
 
   // 若首次登录 自动注册
-  const { err, results } = await query('insert into users set ?', {
+  [err, results] = await query('insert into users set ?', {
     openid,
     unionid,
     username: data.nickName,

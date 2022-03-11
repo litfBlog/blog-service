@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-04 16:11:34
- * @LastEditTime: 2022-03-06 20:28:39
+ * @LastEditTime: 2022-03-11 16:21:24
  * @LastEditors: litfa
  * @Description: 修改登录队列
  * @FilePath: /blog-service/src/utils/sql/loginQueue.ts
@@ -17,7 +17,7 @@ import query from '././../../db/query'
  */
 export const queryStatus = async (code: string) => {
   // return 
-  const { results } = await query('select * from loginQueue where code=?', code)
+  const [err, results] = await query('select * from loginQueue where code=?', code)
   console.log(results)
 
   if (results.length != 1) {
@@ -26,7 +26,7 @@ export const queryStatus = async (code: string) => {
   return results[0].status
 }
 export const setStatus = async (code: string, status: number, userId: number | string) => {
-  const { err, results } = await query('update loginQueue set ? where code=?', [{ status, userId }, code])
+  const [err, results] = await query('update loginQueue set ? where code=?', [{ status, userId }, code])
   if (err) {
     return -1
   }
