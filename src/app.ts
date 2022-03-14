@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-02-16 02:08:57
- * @LastEditTime: 2022-03-04 17:31:42
+ * @LastEditTime: 2022-03-14 09:01:57
  * @LastEditors: litfa
  * @Description: app
  * @FilePath: /blog-service/src/app.ts
@@ -24,7 +24,7 @@ app.use((err: express.Errback, req: express.Request, res: express.Response, next
   // 省略其它代码...
 
   // 捕获身份认证失败的错误
-  if (err.name === 'UnauthorizedError') return res.send('身份认证失败！')
+  if (err.name === 'UnauthorizedError') return res.send({ status: 3, msg: '认证失败，请重新登录' })
 
   // 未知错误...
 })
