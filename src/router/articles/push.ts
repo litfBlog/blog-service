@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-11 14:50:51
- * @LastEditTime: 2022-03-11 16:09:19
+ * @LastEditTime: 2022-03-14 18:02:46
  * @LastEditors: litfa
  * @Description: 发布文章
  * @FilePath: /blog-service/src/router/articles/push.ts
@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
     [err, results] = await query('insert into articles set ?', {
       type: results[0].contenttype,
       uuid,
-      id: user.id,
+      author: user.id,
       title: results[0].title,
       content: results[0].content,
       cover: results[0].cover,
