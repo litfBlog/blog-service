@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-09 11:33:33
- * @LastEditTime: 2022-03-11 16:01:46
+ * @LastEditTime: 2022-03-13 16:28:21
  * @LastEditors: litfa
  * @Description: 初始化文章
  * @FilePath: /blog-service/src/router/articles/init.ts
@@ -30,9 +30,8 @@ router.post('/add', async (req, res) => {
 
   if (results?.length >= 1) {
     return res.send({
-      status: 5, data:
-        results[0]
-
+      status: 5,
+      ...results[0]
     })
   }
   // 创建资源目录
