@@ -1,7 +1,7 @@
 /*
 * @Author: litfa
 * @Date: 2022-03-01 10:52:48
- * @LastEditTime: 2022-03-11 16:20:47
+ * @LastEditTime: 2022-03-14 09:36:43
  * @LastEditors: litfa
  * @Description: 登录相关api
  * @FilePath: /blog-service/src/router/user/login.ts
@@ -71,7 +71,7 @@ router.post('/queryLoginStatus', async (req, res) => {
   // 查询到id，且登录成功 生成token
   if (results[0].status == 2) {
     let token = ''
-    const { results: user } = await query('select * from users where id=?', results[0].userId)
+    const [err, user] = await query('select * from users where id=?', results[0].userId)
     console.log(user)
     token = jwt({ ...user[0] })
     return res.send({ status: 1, loginStatus: results[0]?.status, token })
