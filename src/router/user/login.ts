@@ -1,7 +1,7 @@
 /*
 * @Author: litfa
 * @Date: 2022-03-01 10:52:48
- * @LastEditTime: 2022-03-14 09:36:43
+ * @LastEditTime: 2022-03-15 10:06:23
  * @LastEditors: litfa
  * @Description: 登录相关api
  * @FilePath: /blog-service/src/router/user/login.ts
@@ -91,17 +91,25 @@ router.post('/login', async (req, res) => {
   let { scene } = req.body
   scene = scene.toString()
 
+  // 无效参数
+  if (!encryptedData || !iv || !code) return res.send({ status: 4 })
+
   // 解析用户信息
+  let data
   const { session_key: sessionKey, openid, unionid } = await code2Session(code)
-  const pc = new WXBizDataCrypt(config.wx.appid, sessionKey)
-  const data = pc.decryptData(encryptedData, iv)
-  console.log({
-    openid,
-    unionid,
-    username: data.nickName,
-    avatar: data.avatarUrl,
-    registerDate: Date.now()
-  })
+  try {
+    const pc = new WXBizDataCrypt(config.wx.appid, sessionKey)
+    data = pc.decryptData(encryptedData, iv)
+    console.log({
+      openid,
+      unionid,
+      username: data.nickName,
+      avatar: data.avatarUrl,
+      registerDate: Date.now()
+    })
+  } catch (e) {
+    return res.send({ status: 4 })
+  }
 
   // 部分场景值下还可以获取来源应用、公众号或小程序的appId。
   // https://developers.weixin.qq.com/miniprogram/dev/framework/app-service/scene.html
