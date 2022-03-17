@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-11 14:50:51
- * @LastEditTime: 2022-03-14 18:02:46
+ * @LastEditTime: 2022-03-17 17:15:03
  * @LastEditors: litfa
  * @Description: 发布文章
  * @FilePath: /blog-service/src/router/articles/push.ts
@@ -35,7 +35,8 @@ router.post('/', async (req, res) => {
       title: results[0].title,
       content: results[0].content,
       cover: results[0].cover,
-      status: 0
+      status: 0,
+      createDate: Date.now()
     })
     await query('update articlesqueue set ? where ? and ?', [{ status: 3 }, { uuid }, { author: user.id }])
     console.log(results, err)
