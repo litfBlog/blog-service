@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-17 20:37:42
- * @LastEditTime: 2022-03-18 15:11:06
+ * @LastEditTime: 2022-03-18 18:16:23
  * @LastEditors: litfa
  * @Description: 文件上传
  * @FilePath: /blog-service/src/router/articles/upload.ts
@@ -53,6 +53,8 @@ const upload = multer({
 router.post('/', async (req, res, next) => {
   const uuid = req.query.uuid as string
   const user = req.user as any
+  console.log(uuid)
+
   if (!uuid) return res.send({ status: 4 })
   const [err, results] = await query('select * from articlesqueue where ? and ? and ?', [{ uuid }, { author: user.id }, { status: 1 }])
   if (err || results.length < 1) {
@@ -62,6 +64,8 @@ router.post('/', async (req, res, next) => {
 })
 
 router.post('/', async (req, res) => {
+  const uuid = req.query.uuid as string
+
   upload(req, res, function (err) {
     console.log(err)
 
@@ -75,9 +79,9 @@ router.post('/', async (req, res) => {
       return res.send({ status: 1, fileStatus: 5 })
     }
 
-    console.log(req.file)
+    const filename = req.file?.filename as string
 
-    res.send({ status: 1, fileStatus: 1, fileName: req.file?.filename })
+    res.send({ status: 1, fileStatus: 1, fileName: filename, path: `${config.viewRouter}/${uuid}/${filename}` })
   })
 })
 

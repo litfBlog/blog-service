@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-02-16 02:08:57
- * @LastEditTime: 2022-03-15 10:35:45
+ * @LastEditTime: 2022-03-18 17:08:18
  * @LastEditors: litfa
  * @Description: app
  * @FilePath: /blog-service/src/app.ts
@@ -14,6 +14,7 @@ const app = express()
 import bodyParser from 'body-parser'
 import expressJWT from 'express-jwt'
 import JWTUnless from './config/JWTUnless'
+import { join } from 'path'
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -32,6 +33,9 @@ app.use((err: express.Errback, req: express.Request, res: express.Response, next
 
 import router from './router/index'
 app.use(config.baseUrl, router)
+
+import staticRouter from './router/static/index'
+app.use(config.viewRouter, staticRouter)
 
 app.get('/', (req, res) => {
   res.send('blog service: Status: OK.')
