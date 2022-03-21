@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-17 20:37:42
- * @LastEditTime: 2022-03-18 18:16:23
+ * @LastEditTime: 2022-03-21 18:28:45
  * @LastEditors: litfa
  * @Description: 文件上传
  * @FilePath: /blog-service/src/router/articles/upload.ts
@@ -65,8 +65,10 @@ router.post('/', async (req, res, next) => {
 
 router.post('/', async (req, res) => {
   const uuid = req.query.uuid as string
+  const isCover = req.query.isCover
+  const user = req.user as any
 
-  upload(req, res, function (err) {
+  upload(req, res, async (err) => {
     console.log(err)
 
     if (err instanceof multer.MulterError) {
@@ -79,9 +81,18 @@ router.post('/', async (req, res) => {
       return res.send({ status: 1, fileStatus: 5 })
     }
 
-    const filename = req.file?.filename as string
+    const fileName = req.file?.filename as string
+    const path = `${config.viewRouter}/${uuid}/${fileName}`
 
-    res.send({ status: 1, fileStatus: 1, fileName: filename, path: `${config.viewRouter}/${uuid}/${filename}` })
+    // 封面
+    console.log(isCover)
+
+    if (isCover == 'true') {
+      const [err, results] = await query('update articlesqueue set ? where ? and ?', [{ cover: path }, { uuid }, { author: user.id }])
+      if (err) return res.send({ status: 1, fileStatus: 5, fileName, path })
+    }
+
+    res.send({ status: 1, fileStatus: 1, fileName, path })
   })
 })
 
