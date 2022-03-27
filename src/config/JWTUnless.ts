@@ -11,5 +11,6 @@ import config from './../config'
 export default [
   new RegExp(`^${config.baseUrl}/login/`),
   new RegExp(`^${config.baseUrl}/articles/get/home`),
-  /^\/static\//
+  /^\/static\//,
+  new RegExp(`${config.baseUrl}/articles/getOne`)
 ]
