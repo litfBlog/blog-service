@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-11 14:28:50
- * @LastEditTime: 2022-03-11 16:10:30
+ * @LastEditTime: 2022-03-28 14:27:02
  * @LastEditors: litfa
  * @Description: 保存草稿
  * @FilePath: /blog-service/src/router/articles/save.ts
@@ -13,7 +13,7 @@ import query from '../../db/query'
 const router = Router()
 
 router.post('/', async (req, res) => {
-  const { title, uuid, content, contenttype, cover } = req.body
+  const { title, uuid, content, contenttype, cover, desc } = req.body
   // uuid错误
   if (!uuid) return res.send({ status: 4 })
   const user = req.user as any
@@ -23,7 +23,8 @@ router.post('/', async (req, res) => {
       title: title || '',
       content: content || '',
       contenttype,
-      cover: cover || ''
+      cover: cover || '',
+      desc: desc || ''
     },
     // uuid和作者匹配
     { uuid },
