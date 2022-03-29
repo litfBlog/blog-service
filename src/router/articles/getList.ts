@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-14 20:19:23
- * @LastEditTime: 2022-03-28 15:45:39
+ * @LastEditTime: 2022-03-29 20:44:59
  * @LastEditors: litfa
  * @Description: 首页文章
  * @FilePath: /blog-service/src/router/articles/getList.ts
@@ -19,5 +19,13 @@ router.all('/home', async (req, res) => {
   if (err) return res.send({ status: 5 })
   res.send({ status: 1, list: results })
 })
+// 个人页
+router.all('/user', async (req, res) => {
+  const { limit = 30, offset = 0, author } = req.body || req.query
+  if (!author) return res.send({ status: 4 })
+  const [err, results] = await query('SELECT a.*,a.*,b.username, b.`avatar` FROM `articles` a JOIN `users` b ON a.`author`=b.id where ? ORDER BY a.createDate desc LIMIT ?,?', [{ author }, offset, limit])
 
+  if (err) return res.send({ status: 5 })
+  res.send({ status: 1, list: results })
+})
 export default router
