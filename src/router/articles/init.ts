@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-09 11:33:33
- * @LastEditTime: 2022-03-21 19:03:50
+ * @LastEditTime: 2022-03-30 18:14:55
  * @LastEditors: litfa
  * @Description: 初始化文章
  * @FilePath: /blog-service/src/router/articles/init.ts
@@ -55,6 +55,20 @@ router.post('/add', async (req, res) => {
   if (err || results.affectedRows !== 1) return res.send({ statue: 5 })
 
   res.send({ status: 1, uuid })
+})
+
+// 编辑文章初始化时不需要修改数据库，只需提供数据
+router.post('/edit', async (req, res) => {
+  const { id } = req.body
+  if (!id) return res.send({ status: 4 })
+  const user = req.user as any
+  const [err, results] = await query('select * from articles where ? and ?', [
+    { author: user.id },
+    { id }
+  ])
+  if (err) return res.send({ status: 5 })
+
+  res.send({ status: 1, ...results[0] })
 })
 
 export default router
