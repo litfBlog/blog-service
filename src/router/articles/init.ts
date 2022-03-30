@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-09 11:33:33
- * @LastEditTime: 2022-03-30 18:14:55
+ * @LastEditTime: 2022-03-30 18:15:42
  * @LastEditors: litfa
  * @Description: 初始化文章
  * @FilePath: /blog-service/src/router/articles/init.ts
@@ -52,7 +52,7 @@ router.post('/add', async (req, res) => {
   console.log(err, results)
 
   // 执行 SQL 语句 失败 || 成功 但是影响行数不等于 1
-  if (err || results.affectedRows !== 1) return res.send({ statue: 5 })
+  if (err || results.affectedRows !== 1) return res.send({ status: 5 })
 
   res.send({ status: 1, uuid })
 })
