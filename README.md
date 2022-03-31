@@ -1,6 +1,6 @@
 # blog
 博客后端  
-本项目的前端仓库: [blog-v2](https://github.com/litfa/blog-v2)
+本项目的前端仓库: [blog-v2](https://github.com/litfPress/blog-v2)
 
 # 后端技术
 - ts
@@ -17,7 +17,7 @@
 
 ### 克隆仓库
 ```bash
-$ git clone https://github.com/litfa/blog-service.git
+$ git clone https://github.com/litfPress/blog-service.git
 ```
 ### 安装模块
 ```bash
