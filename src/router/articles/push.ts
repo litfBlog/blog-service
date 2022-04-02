@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-11 14:50:51
- * @LastEditTime: 2022-03-28 14:34:38
+ * @LastEditTime: 2022-04-01 17:39:57
  * @LastEditors: litfa
  * @Description: 发布文章
  * @FilePath: /blog-service/src/router/articles/push.ts
@@ -27,18 +27,19 @@ router.post('/', async (req, res) => {
   // 验证文章信息
 
   // 发布的文章
+  const set = {
+    type: results[0].contenttype,
+    uuid,
+    author: user.id,
+    title: results[0].title,
+    content: results[0].content,
+    cover: results[0].cover,
+    status: 0,
+    createDate: Date.now(),
+    desc: results[0].desc
+  }
   if (results[0].type == 'add') {
-    [err, results] = await query('insert into articles set ?', {
-      type: results[0].contenttype,
-      uuid,
-      author: user.id,
-      title: results[0].title,
-      content: results[0].content,
-      cover: results[0].cover,
-      status: 0,
-      createDate: Date.now(),
-      desc: results[0].desc
-    })
+    [err, results] = await query('insert into articles set ?', set)
     if (err) return res.send({ status: 5 })
     await query('update articlesqueue set ? where ? and ?', [{ status: 3 }, { uuid }, { author: user.id }])
     console.log(results, err)
@@ -46,7 +47,15 @@ router.post('/', async (req, res) => {
     if (!err) return res.send({ status: 1, id: results.insertId })
   } else if (results[0].type == 'edit') {
     // 修改文章
-    // 
+    [err, results] = await query('update articles set ? where ? and ? and ?', [
+      set,
+      { author: user.id },
+      { uuid },
+      { id: results[0].articlesid }
+    ])
+    await query('update articlesqueue set ? where ? and ?', [{ status: 3 }, { uuid }, { author: user.id }])
+    console.log(results, err)
+    if (!err) return res.send({ status: 1, id: results.insertId })
   }
   // const { err, results } = await query('update articlesqueue set ? where ? and ?', [
   //   {
