@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-01 10:24:38
- * @LastEditTime: 2022-04-02 16:36:21
+ * @LastEditTime: 2022-04-04 19:49:03
  * @LastEditors: litfa
  * @Description: 路由
  * @FilePath: /blog-service/src/router/index.ts
@@ -33,6 +33,8 @@ router.use('/articles/upload', upload)
 
 // 文章相关操作（点赞、评论……）
 import like from './operation/like'
+import sendComment from './operation/sendComment'
 router.use('/articles/like', like)
+router.use('/articles/sendComment', sendComment)
 
 export default router
