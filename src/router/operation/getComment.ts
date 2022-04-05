@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-05 14:11:15
- * @LastEditTime: 2022-04-05 15:45:52
+ * @LastEditTime: 2022-04-05 16:02:00
  * @LastEditors: litfa
  * @Description: 获取评论列表
  * @FilePath: /blog-service/src/router/operation/getComment.ts
@@ -55,6 +55,18 @@ class FormatCommentList {
   }
 }
 
+const sql = `
+SELECT 
+  comment.*, 
+  users.avatar AS avatar,
+  users.username AS username
+FROM 
+  \`comment\` AS COMMENT
+LEFT JOIN users users ON users.id=user_id 
+WHERE 
+  articles_id=?
+`
+
 /**
  * @description: 获取视频下的评论列表
  * @param {*} 
@@ -66,7 +78,7 @@ router.post('/getList', async (req, res) => {
   const { id } = req.body
   if (!id) return res.send({ status: 4 })
   // 获取文章评论
-  const [err, results] = await query('SELECT * FROM `comment` WHERE articles_id=?', id)
+  const [err, results] = await query(sql, id)
   if (err) return res.send({ status: 5 })
   const commentList = new FormatCommentList(results).format()
   res.send({ status: 1, data: commentList })
