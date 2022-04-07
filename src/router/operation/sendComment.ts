@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-04 19:19:40
- * @LastEditTime: 2022-04-05 14:49:32
+ * @LastEditTime: 2022-04-06 18:52:32
  * @LastEditors: litfa
  * @Description: 发送评论
  * @FilePath: /blog-service/src/router/operation/sendComment.ts
@@ -23,7 +23,8 @@ router.post('/add', async (req, res) => {
     content: content,
     status: 1,
     parent,
-    father
+    father,
+    date: Date.now()
   })
   if (err) return res.send({ status: 5 })
   res.send({ status: 1, content_id: results.insertId })
