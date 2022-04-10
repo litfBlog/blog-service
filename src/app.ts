@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-02-16 02:08:57
- * @LastEditTime: 2022-03-18 17:08:18
+ * @LastEditTime: 2022-04-10 15:38:01
  * @LastEditors: litfa
  * @Description: app
  * @FilePath: /blog-service/src/app.ts
@@ -33,13 +33,14 @@ app.use((err: express.Errback, req: express.Request, res: express.Response, next
 
 import router from './router/index'
 app.use(config.baseUrl, router)
+import adminRouter from './router/admin/index'
+app.use(config.adminBaseUrl, adminRouter)
 
 import staticRouter from './router/static/index'
 app.use(config.viewRouter, staticRouter)
 
 app.get('/', (req, res) => {
   res.send('blog service: Status: OK.')
-
 })
 
 app.listen(config.port, () =>
