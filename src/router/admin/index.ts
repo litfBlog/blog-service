@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-10 15:33:17
- * @LastEditTime: 2022-04-10 18:42:45
+ * @LastEditTime: 2022-04-10 19:32:15
  * @LastEditors: litfa
  * @Description: 路由
  * @FilePath: /blog-service/src/router/admin/index.ts
@@ -35,6 +35,8 @@ router.get('/', (req, res) => {
 })
 
 import getList from './articles/getList'
+import details from './articles/details'
 router.use('/getList', getList)
+router.use('/details', details)
 
 export default router
