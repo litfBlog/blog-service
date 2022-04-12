@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-05 14:11:15
- * @LastEditTime: 2022-04-05 16:02:00
+ * @LastEditTime: 2022-04-12 17:34:40
  * @LastEditors: litfa
  * @Description: 获取评论列表
  * @FilePath: /blog-service/src/router/operation/getComment.ts
@@ -59,16 +59,19 @@ const sql = `
 SELECT 
   comment.*, 
   users.avatar AS avatar,
-  users.username AS username
+  users.username AS username,
+  COUNT(DISTINCT comment_like.id) AS likes_count
 FROM 
   \`comment\` AS COMMENT
 LEFT JOIN users users ON users.id=user_id 
+LEFT JOIN comment_likes comment_like ON comment_like.\`comment_id\`=comment.id AND comment_like.like=1
 WHERE 
-  articles_id=?
+  comment.articles_id=?
+GROUP BY comment.id
 `
 
 /**
- * @description: 获取视频下的评论列表
+ * @description: 获取文章下的评论列表
  * @param {*} 
  * @param {*} 
  * @param {*} res
