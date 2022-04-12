@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-14 20:19:23
- * @LastEditTime: 2022-04-02 19:35:42
+ * @LastEditTime: 2022-04-12 16:01:43
  * @LastEditors: litfa
  * @Description: 首页文章
  * @FilePath: /blog-service/src/router/articles/getList.ts
@@ -25,12 +25,14 @@ SELECT
     author.avatar,
     author.username,
     COUNT(DISTINCT likes.id, likes.like) AS likes_count,
+    COUNT(DISTINCT comments.id) AS comment_count,
     is_liked.\`user_id\` AS liked
 FROM
     \`articles\` AS articles
 LEFT JOIN \`likes\` likes ON articles.id = likes.articles_id AND likes.like=1
 LEFT JOIN \`users\` author ON articles.\`author\` = author.\`id\`
 LEFT JOIN \`likes\` is_liked ON articles.id = likes.articles_id AND is_liked.\`user_id\` = 1
+LEFT JOIN \`comment\` comments ON articles.id = comments.\`articles_id\`
 GROUP BY articles.id
 ORDER BY articles.createDate DESC
 LIMIT ?, ?
@@ -59,12 +61,14 @@ SELECT
     author.avatar,
     author.username,
     COUNT(DISTINCT likes.id, likes.like) AS likes_count,
+    COUNT(DISTINCT comments.id) AS commont_count,
     is_liked.\`user_id\` AS liked
 FROM
     \`articles\` AS articles
 LEFT JOIN \`likes\` likes ON articles.id = likes.articles_id AND likes.like=1
 LEFT JOIN \`users\` author ON articles.\`author\` = author.\`id\`
 LEFT JOIN \`likes\` is_liked ON articles.id = likes.articles_id AND is_liked.\`user_id\` = 1
+LEFT JOIN \`comment\` comments ON articles.id = comments.\`articles_id\`
 WHERE articles.author=?
 GROUP BY articles.id
 ORDER BY articles.createDate DESC
