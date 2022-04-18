@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-22 10:43:53
- * @LastEditTime: 2022-04-03 21:05:48
+ * @LastEditTime: 2022-04-12 16:27:09
  * @LastEditors: litfa
  * @Description: 获取单个文章
  * @FilePath: /blog-service/src/router/articles/getOne.ts
@@ -38,15 +38,15 @@ ORDER BY articles.createDate DESC
 LIMIT 0, 100
 `
 
+// 未登录用户
 router.post('/:id', async (req, res) => {
   const { id } = req.params
   const [err, results] = await query(sql, [0, id])
-  console.log(err)
-
   if (err) return res.send({ status: 5 })
   res.send({ status: 1, data: results[0] })
 })
 
+// 登录用户 包含是否点赞等字段
 router.post('/detailed/:id', async (req, res) => {
   const { id } = req.params
   const user = req.user as any

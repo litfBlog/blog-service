@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-05 14:11:15
- * @LastEditTime: 2022-04-12 17:34:40
+ * @LastEditTime: 2022-04-13 13:59:01
  * @LastEditors: litfa
  * @Description: 获取评论列表
  * @FilePath: /blog-service/src/router/operation/getComment.ts
@@ -82,6 +82,33 @@ router.post('/getList', async (req, res) => {
   if (!id) return res.send({ status: 4 })
   // 获取文章评论
   const [err, results] = await query(sql, id)
+  if (err) return res.send({ status: 5 })
+  const commentList = new FormatCommentList(results).format()
+  res.send({ status: 1, data: commentList })
+})
+
+const detailedSql = `
+SELECT 
+  comment.*, 
+  users.avatar AS avatar,
+  users.username AS username,
+  COUNT(DISTINCT comment_like.id) AS likes_count,
+  IF(is_likes.like=1, 1, 0) AS liked
+FROM 
+  \`comment\` AS COMMENT
+LEFT JOIN users users ON users.id=user_id 
+LEFT JOIN comment_likes comment_like ON comment_like.\`comment_id\`=comment.id AND comment_like.like=1
+LEFT JOIN \`comment_likes\` is_likes ON  is_likes.\`comment_id\`=comment.\`id\` AND is_likes.\`user_id\`=?
+WHERE 
+  comment.articles_id=?
+GROUP BY comment.id
+`
+router.post('/detailed/getList', async (req, res) => {
+  const { id } = req.body
+  const user = req.user as any
+  if (!id) return res.send({ status: 4 })
+  // 获取文章评论
+  const [err, results] = await query(detailedSql, [user.id, id])
   if (err) return res.send({ status: 5 })
   const commentList = new FormatCommentList(results).format()
   res.send({ status: 1, data: commentList })
