@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-11 14:50:51
- * @LastEditTime: 2022-04-01 17:39:57
+ * @LastEditTime: 2022-04-19 16:39:50
  * @LastEditors: litfa
  * @Description: 发布文章
  * @FilePath: /blog-service/src/router/articles/push.ts
@@ -10,6 +10,7 @@
 import { Router } from 'express'
 import config from './../../config'
 import query from '../../db/query'
+import schema from './../../config/rules/articles'
 const router = Router()
 
 router.post('/', async (req, res) => {
@@ -38,6 +39,10 @@ router.post('/', async (req, res) => {
     createDate: Date.now(),
     desc: results[0].desc
   }
+  if (schema.validate(set).error) {
+    return res.send({ status: 5, msg: '请正确填写表单' })
+  }
+
   if (results[0].type == 'add') {
     [err, results] = await query('insert into articles set ?', set)
     if (err) return res.send({ status: 5 })
