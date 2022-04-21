@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-19 15:31:35
- * @LastEditTime: 2022-04-19 16:35:11
+ * @LastEditTime: 2022-04-20 19:33:40
  * @LastEditors: litfa
  * @Description: 文章验证规则
  * @FilePath: /blog-service/src/config/rules/articles.ts

@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-01 10:24:38
- * @LastEditTime: 2022-04-20 17:58:14
+ * @LastEditTime: 2022-04-20 19:31:18
  * @LastEditors: litfa
  * @Description: 路由
  * @FilePath: /blog-service/src/router/index.ts
@@ -42,5 +42,9 @@ router.use('/articles/sendComment', sendComment)
 router.use('/articles/getComment', getComment)
 router.use('/articles/getLiks', getLiks)
 router.use('/articles/likeComment', likeComment)
+
+// 友链
+import friendLink from './operation/friendLink'
+router.use('/friendLink', friendLink)
 
 export default router
