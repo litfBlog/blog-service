@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-09 18:21:11
- * @LastEditTime: 2022-04-20 19:42:09
+ * @LastEditTime: 2022-04-21 14:26:53
  * @LastEditors: litfa
  * @Description: 友链
  * @FilePath: /blog-service/src/router/operation/friendLink.ts
@@ -12,9 +12,16 @@ import query from './../../db/query'
 import rules from './../../config/rules/friendLink'
 const router = Router()
 
-router.all('/getHomeLink', (req, res) => {
-  // query('')
-  res.send()
+router.all('/getHomeLink', async (req, res) => {
+  const [err, results] = await query('SELECT * FROM friend_links')
+  if (err) return res.send({ status: 5 })
+  res.send({ status: 1, data: results })
+})
+
+router.all('/getAllLink', async (req, res) => {
+  const [err, results] = await query('SELECT * FROM friend_links')
+  if (err) return res.send({ status: 5 })
+  res.send({ status: 1, data: results })
 })
 
 router.post('/add', async (req, res) => {
