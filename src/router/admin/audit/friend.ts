@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-21 15:55:52
- * @LastEditTime: 2022-04-21 17:30:37
+ * @LastEditTime: 2022-04-21 18:11:35
  * @LastEditors: litfa
  * @Description: 友链
  * @FilePath: /blog-service/src/router/admin/audit/friend.ts
@@ -13,6 +13,12 @@ const router = Router()
 
 router.post('/get', async (req, res) => {
   const [err, results] = await query('SELECT * FROM friend_links WHERE status=?', 0)
+  if (err) return res.send({ status: 5 })
+  res.send({ status: 1, data: results })
+})
+
+router.post('/getAll', async (req, res) => {
+  const [err, results] = await query('SELECT * FROM friend_links')
   if (err) return res.send({ status: 5 })
   res.send({ status: 1, data: results })
 })
