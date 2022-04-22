@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-09 18:21:11
- * @LastEditTime: 2022-04-21 14:26:53
+ * @LastEditTime: 2022-04-22 14:41:20
  * @LastEditors: litfa
  * @Description: 友链
  * @FilePath: /blog-service/src/router/operation/friendLink.ts
@@ -13,13 +13,13 @@ import rules from './../../config/rules/friendLink'
 const router = Router()
 
 router.all('/getHomeLink', async (req, res) => {
-  const [err, results] = await query('SELECT * FROM friend_links')
+  const [err, results] = await query('SELECT * FROM friend_links WHERE status=1 AND view_in_home=1')
   if (err) return res.send({ status: 5 })
   res.send({ status: 1, data: results })
 })
 
 router.all('/getAllLink', async (req, res) => {
-  const [err, results] = await query('SELECT * FROM friend_links')
+  const [err, results] = await query('SELECT * FROM friend_links WHERE status=1')
   if (err) return res.send({ status: 5 })
   res.send({ status: 1, data: results })
 })
