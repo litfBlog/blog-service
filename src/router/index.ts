@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-01 10:24:38
- * @LastEditTime: 2022-04-22 18:25:44
+ * @LastEditTime: 2022-04-22 19:48:36
  * @LastEditors: litfa
  * @Description: 路由
  * @FilePath: /blog-service/src/router/index.ts
@@ -35,13 +35,13 @@ router.use('/articles/upload', upload)
 // 重构文章相关接口(v2前缀)
 import initV2 from './articles/v2/init'
 import saveV2 from './articles/v2/save'
-// import pushV2 from './articles/v2/push'
+import pushV2 from './articles/v2/push'
 // import getListV2 from './articles/v2/getList'
 // import getOneV2 from './articles/v2/getOne'
 // import uploadV2 from './articles/v2/upload'
 router.use('/v2/articles/init', initV2)
 router.use('/v2/articles/save', saveV2)
-// router.use('/v2/articles/push', pushV2)
+router.use('/v2/articles/push', pushV2)
 // router.use('/v2/articles/get', getListV2)
 // router.use('/v2/articles/getOne', getOneV2)
 // router.use('/v2/articles/upload', uploadV2)
