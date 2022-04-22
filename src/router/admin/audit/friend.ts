@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-21 15:55:52
- * @LastEditTime: 2022-04-21 18:11:35
+ * @LastEditTime: 2022-04-22 14:36:18
  * @LastEditors: litfa
  * @Description: 友链
  * @FilePath: /blog-service/src/router/admin/audit/friend.ts
@@ -34,6 +34,45 @@ router.post('/set', async (req, res) => {
     // deny
     [err, results] = await query('UPDATE `friend_links` SET ? WHERE ?', [{ status: 2 }, { id }])
   }
+  if (err) return res.send({ status: 5 })
+  res.send({ status: 1 })
+})
+
+router.post('/setData', async (req, res) => {
+  const { id, name, desc, status, url, icon, view_in_home: viewInHome, user_id: userId, date } = req.body
+  if (id == undefined || name == undefined) {
+    return res.send({ status: 4 })
+  }
+  const [err, results] = await query('UPDATE `friend_links` SET ? WHERE ?', [{
+    name,
+    desc,
+    status,
+    url,
+    icon,
+    view_in_home: viewInHome,
+    user_id: userId,
+    date
+  }, { id }])
+  if (err) return res.send({ status: 5 })
+  res.send({ status: 1 })
+})
+
+router.post('/addData', async (req, res) => {
+  const { name, desc, status, url, icon, view_in_home: viewInHome, user_id: userId, date } = req.body
+  if (name == undefined) {
+    return res.send({ status: 4 })
+  }
+  const [err, results] = await query('INSERT INTO friend_links SET ?', [{
+    name,
+    desc,
+    status,
+    url,
+    icon,
+    view_in_home: viewInHome,
+    user_id: userId,
+    date: date || Date.now()
+  }])
+
   if (err) return res.send({ status: 5 })
   res.send({ status: 1 })
 })
