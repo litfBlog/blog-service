@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-19 18:36:50
- * @LastEditTime: 2022-04-22 19:05:02
+ * @LastEditTime: 2022-04-22 21:04:14
  * @LastEditors: litfa
  * @Description: 上传文件（cos）
  * @FilePath: /blog-service/src/router/articles/upload.ts
@@ -72,7 +72,7 @@ router.post('/', async (req, res) => {
 
     if (isCover == 'true') {
       const [err, results] = await query('update saved_articles set ? where ? and ? and ?', [
-        { cover: fileName },
+        { cover: '//' + data.Location },
 
         { id },
         { author: user.id },
