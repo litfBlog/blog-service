@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-05 14:11:15
- * @LastEditTime: 2022-04-13 13:59:01
+ * @LastEditTime: 2022-04-22 15:09:41
  * @LastEditors: litfa
  * @Description: 获取评论列表
  * @FilePath: /blog-service/src/router/operation/getComment.ts
@@ -112,6 +112,14 @@ router.post('/detailed/getList', async (req, res) => {
   if (err) return res.send({ status: 5 })
   const commentList = new FormatCommentList(results).format()
   res.send({ status: 1, data: commentList })
+})
+
+router.post('/getCounts', async (req, res) => {
+  const { id } = req.body
+  if (!id) return res.send({ status: 4 })
+  const [err, results] = await query(sql, id)
+  if (err) return res.send({ status: 5 })
+  res.send({ status: 1, count: results.length })
 })
 
 export default router
