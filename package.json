@@ -19,6 +19,7 @@
     "dayjs": "^1.11.1",
     "express": "^4.17.2",
     "express-jwt": "^5.3.3",
+    "htmltowxml": "^1.0.4",
     "jio": "^3.44.0",
     "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.4",
