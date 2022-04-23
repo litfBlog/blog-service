@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-10 15:33:17
- * @LastEditTime: 2022-04-21 15:57:45
+ * @LastEditTime: 2022-04-23 15:57:44
  * @LastEditors: litfa
  * @Description: 路由
  * @FilePath: /blog-service/src/router/admin/index.ts
@@ -43,6 +43,8 @@ router.use('/getUsers', getUsers)
 
 // 审核相关
 import friend from './audit/friend'
+import articles from './audit/articles'
 router.use('/audit/friend', friend)
+router.use('/audit/articles', articles)
 
 export default router
