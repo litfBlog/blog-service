@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-14 20:19:23
- * @LastEditTime: 2022-04-23 12:36:27
+ * @LastEditTime: 2022-04-23 16:33:02
  * @LastEditors: litfa
  * @Description: 首页文章
  * @FilePath: /blog-service/src/router/articles/getList.ts
@@ -31,6 +31,7 @@ LEFT JOIN \`likes\` likes ON articles.id = likes.articles_id AND likes.like=1
 LEFT JOIN \`users\` author ON articles.\`author\` = author.\`id\`
 LEFT JOIN \`likes\` is_liked ON articles.id = likes.articles_id AND is_liked.\`user_id\` = 1
 LEFT JOIN \`comment\` comments ON articles.id = comments.\`articles_id\`
+WHERE articles.status=1
 GROUP BY articles.id
 ORDER BY articles.create_date DESC
 LIMIT ?, ?
@@ -67,7 +68,7 @@ LEFT JOIN \`likes\` likes ON articles.id = likes.articles_id AND likes.like=1
 LEFT JOIN \`users\` author ON articles.\`author\` = author.\`id\`
 LEFT JOIN \`likes\` is_liked ON articles.id = likes.articles_id AND is_liked.\`user_id\` = 1
 LEFT JOIN \`comment\` comments ON articles.id = comments.\`articles_id\`
-WHERE articles.author=?
+WHERE articles.author=? AND articles.status=1
 GROUP BY articles.id
 ORDER BY articles.create_date DESC
 LIMIT ?, ?
