@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-07 17:06:19
- * @LastEditTime: 2022-04-07 21:06:24
+ * @LastEditTime: 2022-04-23 12:41:11
  * @LastEditors: litfa
  * @Description: 获取点赞的文章
  * @FilePath: /blog-service/src/router/operation/getLikes.ts
@@ -15,13 +15,11 @@ const sql = `
 SELECT  
 likes.*,
 articles.id,
-articles.type,
-articles.uuid,
 articles.title,
 articles.cover,
 articles.status,
 articles.author,
-articles.createDate,
+articles.create_date,
 articles.desc
 FROM 
 \`likes\` AS likes
