@@ -1,6 +1,6 @@
 # blog
 博客后端  
-本项目的前端仓库: [blog-v2](https://github.com/litfa/blog-v2)
+本项目的前端仓库: [blog-v2](https://github.com/litfPress/blog-v2)
 
 # 后端技术
 - ts
@@ -17,7 +17,7 @@
 
 ### 克隆仓库
 ```bash
-$ git clone https://github.com/litfa/blog-service.git
+$ git clone https://github.com/litfPress/blog-service.git
 ```
 ### 安装模块
 ```bash
@@ -67,21 +67,20 @@ test ：单元测试   -->
 - 4: 无效参数
 - 5: 未知异常
 - 6: 资源未找到
-  
-## 文件上传
-- 1 正常
-- 2 文件过大/过小
-- 3 文件类型有误
-- 4 
-- 5 未知错误
 
-## 文章等
-- 0 待审核
+# saved_articles 状态码
+- 0 已初始化完成 保存了草稿
+- 1 已完成
+- 2 修改内容
+- 3 修改内容待审核
+
+# articles 状态码
+- 0 未审核
 - 1 正常
-- 2 访问者权限不足
-- 3 账号状态异常
-- 4 资源未找到
-- 5 未知异常
+- 2 私密
+- 3 修改内容待审核
+- 4 审核不通过
+- 5 删除
 
 ## 文章队列
 - 1 编辑中
@@ -98,3 +97,23 @@ test ：单元测试   -->
 - 4 过期
 - 5 未知错误
 - 6 无效code
+
+# users
+## status
+- 0 已注册未审核
+- 1 正常
+- 2 临时封禁
+- 3 永久封禁
+- 
+## permissions
+- 0
+- 1 普通用户
+- 2-9 权限等级
+- 10 管理员
+- 15 有后台的管理员
+- 20 最高权限
+
+## 友链
+- 0 未审核
+- 1 正常
+- 2 被删除
