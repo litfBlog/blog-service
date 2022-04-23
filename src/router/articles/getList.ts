@@ -1,26 +1,24 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-14 20:19:23
- * @LastEditTime: 2022-04-12 16:01:43
+ * @LastEditTime: 2022-04-23 12:36:27
  * @LastEditors: litfa
  * @Description: 首页文章
  * @FilePath: /blog-service/src/router/articles/getList.ts
  * 
  */
-import query from './../../db/query'
+import query from '../../db/query'
 import { Router } from 'express'
 const router = Router()
 
 const sql = `
 SELECT
     articles.id,
-    articles.type,
-    articles.uuid,
     articles.title,
     articles.cover,
     articles.status,
     articles.author,
-    articles.createDate,
+    articles.create_date,
     articles.desc,
     author.avatar,
     author.username,
@@ -34,7 +32,7 @@ LEFT JOIN \`users\` author ON articles.\`author\` = author.\`id\`
 LEFT JOIN \`likes\` is_liked ON articles.id = likes.articles_id AND is_liked.\`user_id\` = 1
 LEFT JOIN \`comment\` comments ON articles.id = comments.\`articles_id\`
 GROUP BY articles.id
-ORDER BY articles.createDate DESC
+ORDER BY articles.create_date DESC
 LIMIT ?, ?
 `
 
@@ -43,6 +41,8 @@ router.all('/home', async (req, res) => {
   // 可选参数 : limit : 返回数量 , 默认为 30 offset : 偏移数量，用于分页 , 如 : 如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
   const { limit = 30, offset = 0 } = req.body || req.query
   const [err, results] = await query(sql, [offset, limit])
+  console.log(err)
+
   if (err) return res.send({ status: 5 })
   res.send({ status: 1, list: results })
 })
@@ -50,13 +50,11 @@ router.all('/home', async (req, res) => {
 const userSql = `
 SELECT
     articles.id,
-    articles.type,
-    articles.uuid,
     articles.title,
     articles.cover,
     articles.status,
     articles.author,
-    articles.createDate,
+    articles.create_date,
     articles.desc,
     author.avatar,
     author.username,
@@ -71,7 +69,7 @@ LEFT JOIN \`likes\` is_liked ON articles.id = likes.articles_id AND is_liked.\`u
 LEFT JOIN \`comment\` comments ON articles.id = comments.\`articles_id\`
 WHERE articles.author=?
 GROUP BY articles.id
-ORDER BY articles.createDate DESC
+ORDER BY articles.create_date DESC
 LIMIT ?, ?
 `
 // 个人页
