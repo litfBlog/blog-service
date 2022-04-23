@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-11 14:50:51
- * @LastEditTime: 2022-04-23 16:39:03
+ * @LastEditTime: 2022-04-23 16:44:31
  * @LastEditors: litfa
  * @Description: 发布文章
  * @FilePath: /blog-service/src/router/articles/push.ts
@@ -37,6 +37,8 @@ router.post('/', async (req, res) => {
 
   // 验证文章信息
   if (schema.validate(req.body).error) {
+    console.log(schema.validate(req.body).error)
+
     return res.send({ status: 5, msg: '请正确填写表单' })
   }
 

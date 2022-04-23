@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-23 15:54:33
- * @LastEditTime: 2022-04-23 16:30:39
+ * @LastEditTime: 2022-04-23 16:47:53
  * @LastEditors: litfa
  * @Description: 文章审核
  * @FilePath: /blog-service/src/router/admin/audit/articles.ts
@@ -37,7 +37,7 @@ ORDER BY articles.create_date DESC
 `
 router.post('/get', async (req, res) => {
   const [err, results] = await query(sql, {
-    'articles.status': 1
+    'articles.status': 0
   })
 
   if (err) return res.send({ status: 5 })
