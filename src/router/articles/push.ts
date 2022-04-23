@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-11 14:50:51
- * @LastEditTime: 2022-04-23 12:34:31
+ * @LastEditTime: 2022-04-23 16:39:03
  * @LastEditors: litfa
  * @Description: 发布文章
  * @FilePath: /blog-service/src/router/articles/push.ts
@@ -52,10 +52,10 @@ router.post('/', async (req, res) => {
   const insert: any = {
     ...data,
     create_Date: Date.now(),
-    status: 1,
+    status: 0,
     author: user.id
   }
-  // 更新的数据包
+  // 更新的数据
   const update: any = {
     ...data,
     last_edit_date: Date.now(),
