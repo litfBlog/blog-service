@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-22 10:43:53
- * @LastEditTime: 2022-04-23 12:34:41
+ * @LastEditTime: 2022-04-24 17:56:23
  * @LastEditors: litfa
  * @Description: 获取单个文章
  * @FilePath: /blog-service/src/router/articles/getOne.ts
@@ -9,6 +9,8 @@
  */
 import query from '../../db/query'
 import { Router } from 'express'
+import markdown from './../../utils/markdown'
+import htmlAddClass from '../../utils/htmlAddClass'
 const router = Router()
 
 const sql = `
@@ -53,6 +55,24 @@ router.post('/detailed/:id', async (req, res) => {
   if (err) return res.send({ status: 5 })
   res.send({ status: 1, data: results[0] })
 
+})
+
+// 获取解析后的html 由微信小程序调用
+router.post('/getWXML/:id', async (req, res) => {
+  const { id } = req.params
+  const [err, results] = await query(sql, [0, id])
+  if (err) return res.send({ status: 5 })
+
+  if (results.length < 1) {
+    return res.send({ status: 4 })
+  }
+
+  let content = results[0].content
+  content = markdown(content)
+  content = htmlAddClass(content)
+  results[0].content = content
+
+  res.send({ status: 1, data: results[0] })
 })
 
 export default router
