@@ -1,7 +1,7 @@
 /*
 * @Author: litfa
 * @Date: 2022-03-01 10:52:48
- * @LastEditTime: 2022-03-15 10:06:23
+ * @LastEditTime: 2022-04-24 19:32:22
  * @LastEditors: litfa
  * @Description: 登录相关api
  * @FilePath: /blog-service/src/router/user/login.ts
@@ -83,7 +83,7 @@ import WXBizDataCrypt from '../../utils/wx/WXBizDataCrypt'
 import code2Session from './../../utils/wx/code2Session'
 
 /**
- * @description: 登录
+ * @description: 登录(由小程序调用)
  */
 router.post('/login', async (req, res) => {
   // 获取&处理参数
@@ -119,6 +119,7 @@ router.post('/login', async (req, res) => {
     // 直接返回token
   } else {
     console.log(scene)
+    // 从数据库查询是否申请过code
     const status = await loginQueue.queryStatus(scene)
     console.log(status)
 
@@ -131,13 +132,14 @@ router.post('/login', async (req, res) => {
   // 找到该用户
   if (results?.length == 1) {
     // 小程序登录 不需要数据库操作 直接登录
+    const token = jwt({ ...results[0] })
     if (scene.length == 4) {
-      return res.send({ status: 1, type: 'login' })
+      return res.send({ status: 1, type: 'login', token })
     }
     // 网页登录 更新登录队列
     const status = await loginQueue.setStatus(scene, 2, results[0].id)
     if (status == -1) return res.send({ status: 5 })
-    return res.send({ status: 1, type: 'login' })
+    return res.send({ status: 1, type: 'login', token })
   }
 
   // 若首次登录 自动注册
@@ -153,14 +155,21 @@ router.post('/login', async (req, res) => {
     return res.send({ status: 5, message: '登录失败，请稍后再试！' })
   }
   // 注册成功
+  const token = jwt({
+    openid,
+    unionid,
+    username: data.nickName,
+    avatar: data.avatarUrl,
+    registerDate: Date.now()
+  })
   // 小程序登录 不需要数据库操作 直接登录
   if (scene.length == 4) {
-    return res.send({ status: 1, type: 'register' })
+    return res.send({ status: 1, type: 'register', token })
   }
   // 网页登录 更新登录队列
   const status = await loginQueue.setStatus(scene, 2, results[0].id)
   if (status == -1) return res.send({ status: 5 })
-  res.send({ status: 1, message: '注册成功！', type: 'register' })
+  res.send({ status: 1, message: '注册成功！', type: 'register', token })
 
 })
 
