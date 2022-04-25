@@ -1,13 +1,13 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-10 15:33:17
- * @LastEditTime: 2022-04-23 15:57:44
+ * @LastEditTime: 2022-04-25 18:46:28
  * @LastEditors: litfa
  * @Description: 路由
  * @FilePath: /blog-service/src/router/admin/index.ts
  * 
  */
-import config from './../../config'
+import { logger } from '../../utils/log'
 import { Router } from 'express'
 import query from './../../db/query'
 const router = Router()
@@ -22,11 +22,14 @@ router.use('*', async (req, res, next) => {
     if (results.length != 1) return res.send({ status: 5 })
   }
   if (results[0].status != 1) {
+    logger.info(`ip:${req.ip}  请求后台:${req.path}  user-agent:${req.headers['user-agent']}`, `${user.id} 账号异常`, JSON.stringify(req.body))
     return res.send({ status: 3 })
   }
   if (results[0].permissions < 15) {
+    logger.info(`ip:${req.ip}  请求后台:${req.path}  user-agent:${req.headers['user-agent']}`, `${user.id} 权限不足`, JSON.stringify(req.body))
     return res.send({ status: 2 })
   }
+  logger.info(`ip:${req.ip}  请求后台:${req.path}  user-agent:${req.headers['user-agent']}`, `${user.id} 权限通过`, JSON.stringify(req.body))
   next()
 })
 

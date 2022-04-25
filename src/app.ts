@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-02-16 02:08:57
- * @LastEditTime: 2022-04-25 16:13:17
+ * @LastEditTime: 2022-04-25 17:54:25
  * @LastEditors: litfa
  * @Description: app
  * @FilePath: /blog-service/src/app.ts
@@ -17,6 +17,14 @@ import JWTUnless from './config/JWTUnless'
 import { logger } from './utils/log'
 
 logger.info('litfPress service 启动中')
+
+// 中间件记录日志
+app.use('*', (req: any, res, next) => {
+  // 用于记录特定时间的日志输出
+
+  next()
+  logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`)
+})
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))

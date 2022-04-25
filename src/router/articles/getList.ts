@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-14 20:19:23
- * @LastEditTime: 2022-04-23 16:33:02
+ * @LastEditTime: 2022-04-25 18:41:37
  * @LastEditors: litfa
  * @Description: 首页文章
  * @FilePath: /blog-service/src/router/articles/getList.ts
@@ -42,7 +42,6 @@ router.all('/home', async (req, res) => {
   // 可选参数 : limit : 返回数量 , 默认为 30 offset : 偏移数量，用于分页 , 如 : 如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
   const { limit = 30, offset = 0 } = req.body || req.query
   const [err, results] = await query(sql, [offset, limit])
-  console.log(err)
 
   if (err) return res.send({ status: 5 })
   res.send({ status: 1, list: results })

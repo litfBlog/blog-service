@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-03 18:34:20
- * @LastEditTime: 2022-03-06 20:22:53
+ * @LastEditTime: 2022-04-25 18:41:34
  * @LastEditors: litfa
  * @Description: 登录凭证校验
  * @FilePath: /blog-service/src/utils/wx/code2Session.ts
@@ -27,7 +27,6 @@ export default async (code: string) => {
       grant_type: 'authorization_code'
     }
   })
-  console.log(res)
 
   return res
 }

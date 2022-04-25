@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-19 18:36:50
- * @LastEditTime: 2022-04-22 21:04:14
+ * @LastEditTime: 2022-04-25 18:41:35
  * @LastEditors: litfa
  * @Description: 上传文件（cos）
  * @FilePath: /blog-service/src/router/articles/upload.ts
@@ -59,7 +59,6 @@ router.post('/', async (req, res) => {
   const isCover = req.query.isCover
 
   upload(req, res, async () => {
-    console.log(req.file)
     if (req.file?.buffer == undefined) return res.send({ status: 5 })
     const fileNameData = `user${user.id}/${dayjs().format('YYYYMMDDHHmmss')}`
     const fileNameText = `${req.file?.originalname.replace(/\.(jpg|jpeg|png|gif)$/g, '')}`

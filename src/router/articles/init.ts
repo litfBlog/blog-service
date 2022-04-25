@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-22 17:45:28
- * @LastEditTime: 2022-04-23 12:55:07
+ * @LastEditTime: 2022-04-25 18:41:33
  * @LastEditors: litfa
  * @Description: 初始化文章
  * @FilePath: /blog-service/src/router/articles/init.ts
@@ -63,7 +63,6 @@ router.post('/edit', async (req, res) => {
   ])
   // 查询到队列 直接返回
   if (results?.length >= 1) {
-    console.log(results)
 
     return res.send({ status: 1, data: results[0] })
   }

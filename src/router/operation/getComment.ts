@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-05 14:11:15
- * @LastEditTime: 2022-04-22 15:09:41
+ * @LastEditTime: 2022-04-25 18:41:43
  * @LastEditors: litfa
  * @Description: 获取评论列表
  * @FilePath: /blog-service/src/router/operation/getComment.ts
@@ -28,7 +28,6 @@ class FormatCommentList {
    */
   public format() {
     this.commentList.forEach((element: any) => {
-      console.log(element)
       // 父级评论 直接push进去
       if (element.father == 0)
         this.results.push({

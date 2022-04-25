@@ -1,7 +1,7 @@
 /*
 * @Author: litfa
 * @Date: 2022-03-01 10:52:48
- * @LastEditTime: 2022-04-24 19:32:22
+ * @LastEditTime: 2022-04-25 18:38:33
  * @LastEditors: litfa
  * @Description: 登录相关api
  * @FilePath: /blog-service/src/router/user/login.ts
@@ -14,6 +14,7 @@ import db from './../../db/index'
 import query from './../../db/query'
 import * as loginQueue from './../../utils/sql/loginQueue'
 import jwt from './../../utils/token'
+import { logger } from '../../utils/log'
 const router = express.Router()
 
 /**
@@ -39,7 +40,6 @@ router.post('/getQRCode', async (req, res) => {
   if (!code) return res.send({ status: 4 })
 
   await db.query('select * from loginQueue where code=?', code, async (err, results) => {
-    console.log(err, results)
     // 查询不到
     if (results.length != 1) return res.send({ status: 6 })
     // 超时
@@ -72,7 +72,6 @@ router.post('/queryLoginStatus', async (req, res) => {
   if (results[0].status == 2) {
     let token = ''
     const [err, user] = await query('select * from users where id=?', results[0].userId)
-    console.log(user)
     token = jwt({ ...user[0] })
     return res.send({ status: 1, loginStatus: results[0]?.status, token })
   }
@@ -100,13 +99,6 @@ router.post('/login', async (req, res) => {
   try {
     const pc = new WXBizDataCrypt(config.wx.appid, sessionKey)
     data = pc.decryptData(encryptedData, iv)
-    console.log({
-      openid,
-      unionid,
-      username: data.nickName,
-      avatar: data.avatarUrl,
-      registerDate: Date.now()
-    })
   } catch (e) {
     return res.send({ status: 4 })
   }
@@ -118,10 +110,8 @@ router.post('/login', async (req, res) => {
     // 检查是否注册
     // 直接返回token
   } else {
-    console.log(scene)
     // 从数据库查询是否申请过code
     const status = await loginQueue.queryStatus(scene)
-    console.log(status)
 
     if (status == -1) return res.send({ status: 6 })
   }
@@ -134,11 +124,13 @@ router.post('/login', async (req, res) => {
     // 小程序登录 不需要数据库操作 直接登录
     const token = jwt({ ...results[0] })
     if (scene.length == 4) {
+      logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`, `${results[0].id}小程序登录成功`)
       return res.send({ status: 1, type: 'login', token })
     }
     // 网页登录 更新登录队列
     const status = await loginQueue.setStatus(scene, 2, results[0].id)
     if (status == -1) return res.send({ status: 5 })
+    logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`, `${results[0].id}小程序+网页登录成功`)
     return res.send({ status: 1, type: 'login', token })
   }
 
@@ -152,6 +144,7 @@ router.post('/login', async (req, res) => {
   })
   // SQL 语句执行成功，但影响行数不为 1
   if (err || results?.affectedRows !== 1) {
+    logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`, '登录失败')
     return res.send({ status: 5, message: '登录失败，请稍后再试！' })
   }
   // 注册成功
@@ -164,11 +157,13 @@ router.post('/login', async (req, res) => {
   })
   // 小程序登录 不需要数据库操作 直接登录
   if (scene.length == 4) {
+    logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`, `${results[0].id}小程序注册成功`)
     return res.send({ status: 1, type: 'register', token })
   }
   // 网页登录 更新登录队列
   const status = await loginQueue.setStatus(scene, 2, results[0].id)
   if (status == -1) return res.send({ status: 5 })
+  logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`, `${results[0].id}小程序+网页注册成功`)
   res.send({ status: 1, message: '注册成功！', type: 'register', token })
 
 })
