@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-22 10:43:53
- * @LastEditTime: 2022-04-24 17:56:23
+ * @LastEditTime: 2022-04-25 20:06:10
  * @LastEditors: litfa
  * @Description: 获取单个文章
  * @FilePath: /blog-service/src/router/articles/getOne.ts
@@ -43,6 +43,10 @@ router.post('/:id', async (req, res) => {
   const { id } = req.params
   const [err, results] = await query(sql, [0, id])
   if (err) return res.send({ status: 5 })
+  // 404
+  if (results.length < 1) {
+    return res.send({ status: 6 })
+  }
   res.send({ status: 1, data: results[0] })
 })
 
@@ -53,6 +57,10 @@ router.post('/detailed/:id', async (req, res) => {
   if (!user.id) return res.send({ status: 4 })
   const [err, results] = await query(sql, [user.id, id])
   if (err) return res.send({ status: 5 })
+  // 404
+  if (results.length < 1) {
+    return res.send({ status: 6 })
+  }
   res.send({ status: 1, data: results[0] })
 
 })
@@ -64,7 +72,7 @@ router.post('/getWXML/:id', async (req, res) => {
   if (err) return res.send({ status: 5 })
 
   if (results.length < 1) {
-    return res.send({ status: 4 })
+    return res.send({ status: 6 })
   }
 
   let content = results[0].content
