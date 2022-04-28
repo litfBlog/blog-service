@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-02-16 02:08:57
- * @LastEditTime: 2022-04-25 17:54:25
+ * @LastEditTime: 2022-04-27 17:55:15
  * @LastEditors: litfa
  * @Description: app
  * @FilePath: /blog-service/src/app.ts
@@ -22,8 +22,13 @@ logger.info('litfPress service 启动中')
 app.use('*', (req: any, res, next) => {
   // 用于记录特定时间的日志输出
 
+  try {
+    req.userIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+  } catch (e) {
+    console.log(e)
+  }
   next()
-  logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`)
+  logger.info(`ip:${req.userIp}  请求:${req.path}  user-agent:${req.headers['user-agent']}`)
 })
 
 app.use(bodyParser.json())
