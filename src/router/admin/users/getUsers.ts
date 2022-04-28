@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-11 15:19:58
- * @LastEditTime: 2022-04-28 17:41:24
+ * @LastEditTime: 2022-04-28 19:29:44
  * @LastEditors: litfa
  * @Description: 获取用户列表
  * @FilePath: /blog-service/src/router/admin/users/getUsers.ts
@@ -22,6 +22,22 @@ router.post('/getOne', async (req, res) => {
   const [err, results] = await query('SELECT * FROM users WHERE ?', { id })
   if (err) return res.send({ status: 5 })
   res.send({ status: 1, data: results[0] })
+})
+
+router.post('/set', async (req, res) => {
+  const { data, id } = req.body
+  if (id == undefined) {
+    return res.send({ status: 4 })
+  }
+  const setData: any = {}
+  for (const i in data) {
+    if (data[i] !== undefined || data[i] !== null) {
+      setData[i] = data[i]
+    }
+  }
+  const [err, results] = await query('update users set ? where ?', [setData, { id }])
+  if (err) return res.send({ status: 5 })
+  res.send({ status: 1 })
 })
 
 export default router
