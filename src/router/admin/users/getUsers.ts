@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-11 15:19:58
- * @LastEditTime: 2022-04-28 19:29:44
+ * @LastEditTime: 2022-04-28 19:39:01
  * @LastEditors: litfa
  * @Description: 获取用户列表
  * @FilePath: /blog-service/src/router/admin/users/getUsers.ts
@@ -31,7 +31,7 @@ router.post('/set', async (req, res) => {
   }
   const setData: any = {}
   for (const i in data) {
-    if (data[i] !== undefined || data[i] !== null) {
+    if (data[i] !== undefined || data[i] !== null || data[i] == '') {
       setData[i] = data[i]
     }
   }
