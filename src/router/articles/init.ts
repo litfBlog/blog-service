@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-22 17:45:28
- * @LastEditTime: 2022-04-25 18:41:33
+ * @LastEditTime: 2022-04-29 15:41:11
  * @LastEditors: litfa
  * @Description: 初始化文章
  * @FilePath: /blog-service/src/router/articles/init.ts
@@ -89,7 +89,7 @@ router.post('/edit', async (req, res) => {
   // 执行 SQL 语句 失败 || 成功 但是影响行数不等于 1
   if (insertErr || insert.affectedRows !== 1) return res.send({ status: 5 })
 
-  res.send({ status: 1, data: results[0] })
+  res.send({ status: 1, data: { ...results[0], id: insert.insertId } })
 })
 
 export default router

@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-11 14:50:51
- * @LastEditTime: 2022-04-25 18:41:36
+ * @LastEditTime: 2022-04-29 15:39:29
  * @LastEditors: litfa
  * @Description: 发布文章
  * @FilePath: /blog-service/src/router/articles/push.ts
@@ -60,8 +60,8 @@ router.post('/', async (req, res) => {
   const update: any = {
     ...data,
     last_edit_date: Date.now(),
-    status: 3,
-    articles_id: results[0].status.articles_id
+    status: 1
+    // articles_id: results[0].status.articles_id
   }
 
   if (results[0].status == 0) {
@@ -80,7 +80,7 @@ router.post('/', async (req, res) => {
     // 更新文章
     [err, results] = await query('update articles set ? where ?', [
       update,
-      { id: results[0].status.articles_id }
+      { id: results[0].articles_id }
     ])
     if (err) return res.send({ status: 5 })
     // 修改原数据库状态
