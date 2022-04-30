@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-01 10:24:38
- * @LastEditTime: 2022-04-26 19:17:04
+ * @LastEditTime: 2022-04-30 14:36:58
  * @LastEditors: litfa
  * @Description: 路由
  * @FilePath: /blog-service/src/router/index.ts
@@ -49,5 +49,9 @@ router.use('/report', report)
 // 友链
 import friendLink from './operation/friendLink'
 router.use('/friendLink', friendLink)
+
+// 搜索
+import search from './search/search'
+router.use('/search', search)
 
 export default router
