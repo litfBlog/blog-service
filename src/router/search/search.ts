@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-30 14:34:11
- * @LastEditTime: 2022-04-30 18:57:13
+ * @LastEditTime: 2022-04-30 19:05:09
  * @LastEditors: litfa
  * @Description: 搜索
  * @FilePath: /blog-service/src/router/search/search.ts
@@ -40,11 +40,11 @@ LIMIT ?, ?
 router.post('/', async (req, res) => {
   const { keyword } = req.body
 
-  if (!keyword) {
+  if (!keyword || keyword == ' ') {
     return res.send({ status: 1, data: [] })
   }
 
-  const [err, results] = await query(sql, [keyword, keyword, 0, 100])
+  const [err, results] = await query(sql, [keyword.trimStart().trimEnd(), keyword.trimStart().trimEnd(), 0, 100])
 
   const data = { ...results }
 
@@ -60,7 +60,10 @@ router.post('/', async (req, res) => {
 
 router.post('/keyWords', async (req, res) => {
   const { keyword } = req.body
-  const [err, results] = await query('SELECT title, id FROM `articles` WHERE articles.status=1 AND INSTR(articles.title, ?) OR articles.status=1 AND INSTR(articles.content, ?)', [keyword, keyword])
+  if (!keyword || keyword == ' ') {
+    return res.send({ status: 1, data: [] })
+  }
+  const [err, results] = await query('SELECT title, id FROM `articles` WHERE articles.status=1 AND INSTR(articles.title, ?)', [keyword.trimStart().trimEnd(), keyword.trimStart().trimEnd()])
   res.send({ status: 1, data: results })
 })
 
