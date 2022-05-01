@@ -1,13 +1,14 @@
 /*
 * @Author: litfa
  * @Date: 2022-03-01 19:45:10
- * @LastEditTime: 2022-03-01 20:39:13
+ * @LastEditTime: 2022-04-25 18:41:31
  * @LastEditors: litfa
  * @Description: 获取 AccessToken
  * @FilePath: /blog-service/src/utils/wx/getAccessToken.ts
  * 
 */
 import axios from 'axios'
+import { logger } from '../log'
 import config from './../../config'
 // access_token 的有效期目前为 2 个小时 (2022-03-01 19:45:57)
 interface temp {
@@ -29,7 +30,7 @@ const getAccessToken = async (): Promise<string> => {
   })
   // 异常
   if (res.code && res.code != 0) {
-    console.log(res)
+    logger.warn('AccessToken 获取失败', JSON.stringify(res))
   }
   // 缓存
   temp.date = Date.now()
@@ -41,7 +42,5 @@ export default async (): Promise<string> => {
   if (!temp.access_token || (temp.date || 0) + (2 * 60 * 60 * 1000) <= Date.now()) {
     await getAccessToken()
   }
-  console.log(temp)
-
   return temp.access_token || 'error'
 }

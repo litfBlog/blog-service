@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-04-10 15:32:47
- * @LastEditTime: 2022-04-10 16:29:22
+ * @LastEditTime: 2022-04-23 16:16:19
  * @LastEditors: litfa
  * @Description: 获取文章列表
  * @FilePath: /blog-service/src/router/admin/articles/getList.ts
@@ -15,13 +15,11 @@ router.post('/all', async (req, res) => {
   const sql = `
   SELECT
       articles.id,
-      articles.type,
-      articles.uuid,
       articles.title,
       articles.cover,
       articles.status,
       articles.author,
-      articles.createDate,
+      articles.create_date,
       articles.desc,
       author.avatar,
       author.username,
@@ -33,7 +31,7 @@ router.post('/all', async (req, res) => {
   LEFT JOIN \`users\` author ON articles.\`author\` = author.\`id\`
   LEFT JOIN \`likes\` is_liked ON articles.id = likes.articles_id AND is_liked.\`user_id\` = 1
   GROUP BY articles.id
-  ORDER BY articles.createDate DESC
+  ORDER BY articles.create_date DESC
   LIMIT ?, ?
   `
   const { limit = 100, offset = 0 } = req.body
@@ -45,13 +43,11 @@ router.post('/user', async (req, res) => {
   const sql = `
   SELECT
       articles.id,
-      articles.type,
-      articles.uuid,
       articles.title,
       articles.cover,
       articles.status,
       articles.author,
-      articles.createDate,
+      articles.create_date,
       articles.desc,
       author.avatar,
       author.username,
@@ -64,7 +60,7 @@ router.post('/user', async (req, res) => {
   LEFT JOIN \`likes\` is_liked ON articles.id = likes.articles_id AND is_liked.\`user_id\` = 1
   WHERE articles.author=?
   GROUP BY articles.id
-  ORDER BY articles.createDate DESC
+  ORDER BY articles.create_date DESC
   LIMIT ?, ?
 `
   const { limit = 30, offset = 0, author } = req.body || req.query
@@ -78,13 +74,11 @@ router.post('/status', async (req, res) => {
   const sql = `
   SELECT
       articles.id,
-      articles.type,
-      articles.uuid,
       articles.title,
       articles.cover,
       articles.status,
       articles.author,
-      articles.createDate,
+      articles.create_date,
       articles.desc,
       author.avatar,
       author.username,
@@ -97,7 +91,7 @@ router.post('/status', async (req, res) => {
   LEFT JOIN \`likes\` is_liked ON articles.id = likes.articles_id AND is_liked.\`user_id\` = 1
   WHERE articles.status=?
   GROUP BY articles.id
-  ORDER BY articles.createDate DESC
+  ORDER BY articles.create_date DESC
   LIMIT ?, ?
 `
   const { limit = 30, offset = 0, status } = req.body || req.query

@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-02-16 02:08:57
- * @LastEditTime: 2022-04-10 15:38:01
+ * @LastEditTime: 2022-04-27 17:55:15
  * @LastEditors: litfa
  * @Description: app
  * @FilePath: /blog-service/src/app.ts
@@ -14,7 +14,22 @@ const app = express()
 import bodyParser from 'body-parser'
 import expressJWT from 'express-jwt'
 import JWTUnless from './config/JWTUnless'
-import { join } from 'path'
+import { logger } from './utils/log'
+
+logger.info('litfPress service 启动中')
+
+// 中间件记录日志
+app.use('*', (req: any, res, next) => {
+  // 用于记录特定时间的日志输出
+
+  try {
+    req.userIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+  } catch (e) {
+    console.log(e)
+  }
+  next()
+  logger.info(`ip:${req.userIp}  请求:${req.path}  user-agent:${req.headers['user-agent']}`)
+})
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -43,6 +58,8 @@ app.get('/', (req, res) => {
   res.send('blog service: Status: OK.')
 })
 
-app.listen(config.port, () =>
-  console.log(`http://localhost:${config.port}`)
-)
+logger.info(`监听端口 ${config.port}`)
+app.listen(config.port, () => {
+  logger.info('启动成功')
+  logger.info(`http://localhost:${config.port}`)
+})

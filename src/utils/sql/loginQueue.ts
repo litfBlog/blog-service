@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-03-04 16:11:34
- * @LastEditTime: 2022-03-11 16:21:24
+ * @LastEditTime: 2022-04-25 18:41:35
  * @LastEditors: litfa
  * @Description: 修改登录队列
  * @FilePath: /blog-service/src/utils/sql/loginQueue.ts
@@ -18,7 +18,6 @@ import query from '././../../db/query'
 export const queryStatus = async (code: string) => {
   // return 
   const [err, results] = await query('select * from loginQueue where code=?', code)
-  console.log(results)
 
   if (results.length != 1) {
     return -1
