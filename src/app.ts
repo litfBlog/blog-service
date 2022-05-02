@@ -1,7 +1,7 @@
 /*
  * @Author: litfa
  * @Date: 2022-02-16 02:08:57
- * @LastEditTime: 2022-04-27 17:55:15
+ * @LastEditTime: 2022-05-02 15:19:54
  * @LastEditors: litfa
  * @Description: app
  * @FilePath: /blog-service/src/app.ts
@@ -15,8 +15,11 @@ import bodyParser from 'body-parser'
 import expressJWT from 'express-jwt'
 import JWTUnless from './config/JWTUnless'
 import { logger } from './utils/log'
+import cors from 'cors'
 
 logger.info('litfPress service 启动中')
+
+app.use(cors())
 
 // 中间件记录日志
 app.use('*', (req: any, res, next) => {
