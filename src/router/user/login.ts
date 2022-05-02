@@ -1,7 +1,7 @@
 /*
 * @Author: litfa
 * @Date: 2022-03-01 10:52:48
- * @LastEditTime: 2022-04-25 18:38:33
+ * @LastEditTime: 2022-05-02 20:06:05
  * @LastEditors: litfa
  * @Description: 登录相关api
  * @FilePath: /blog-service/src/router/user/login.ts
@@ -149,6 +149,7 @@ router.post('/login', async (req, res) => {
   }
   // 注册成功
   const token = jwt({
+    id: results.insertId,
     openid,
     unionid,
     username: data.nickName,
@@ -157,13 +158,13 @@ router.post('/login', async (req, res) => {
   })
   // 小程序登录 不需要数据库操作 直接登录
   if (scene.length == 4) {
-    logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`, `${results[0].id}小程序注册成功`)
+    logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`, `${results.insertId}小程序注册成功`)
     return res.send({ status: 1, type: 'register', token })
   }
   // 网页登录 更新登录队列
-  const status = await loginQueue.setStatus(scene, 2, results[0].id)
+  const status = await loginQueue.setStatus(scene, 2, results.insertId)
   if (status == -1) return res.send({ status: 5 })
-  logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`, `${results[0].id}小程序+网页注册成功`)
+  logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`, `${results.insertId}小程序+网页注册成功`)
   res.send({ status: 1, message: '注册成功！', type: 'register', token })
 
 })
