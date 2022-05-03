@@ -1,23 +1,22 @@
-# blog
-博客后端  
-本项目的前端仓库: [blog-v2](https://github.com/litfPress/blog-v2)
+# 博客后端 litfBlog  
+本项目的其他仓库:
+[前端](https://github.com/litfBlog/blog)
+[小程序](https://github.com/litfBlog/blog-miniprogram)
+[后台](https://github.com/litfBlog/admin)
 
-# 后端技术
-- ts
-- express
-- mysql
-- JWT
-- ...
+# 特性
+- 使用`mysql`数据库
+- 完善的api文档[点击查看](https://console-docs.apipost.cn/preview/30d1279e811bef63/63ef8f71eaea6784)
+- 使用`TypeScript`
+- 使用`JWT`身份验证
+- 使用微信登录
 
-# 开发进度
-该项目仍在开发中...
-
-# 搭建开发环境
+# 使用
 推荐使用 [yarn](https://www.yarnpkg.cn/) 替代 `npm`
 
 ### 克隆仓库
 ```bash
-$ git clone https://github.com/litfPress/blog-service.git
+$ git clone https://github.com/litfBlog/blog-service.git
 ```
 ### 安装模块
 ```bash
