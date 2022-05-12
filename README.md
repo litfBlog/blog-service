@@ -9,9 +9,6 @@
 - JWT
 - ...
 
-# 开发进度
-该项目仍在开发中...
-
 # 搭建开发环境
 推荐使用 [yarn](https://www.yarnpkg.cn/) 替代 `npm`
 
