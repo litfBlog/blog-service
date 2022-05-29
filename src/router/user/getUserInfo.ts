@@ -8,10 +8,15 @@
  * 
  */
 import { Router } from 'express'
+import query from '../../db/query'
 const router = Router()
 
-router.post('/', (req, res) => {
-  res.send({ status: 1, userInfo: req.user })
+router.post('/', async (req, res) => {
+  const user = req.user as any
+  // 为了确保用户信息实时性 需要从数据库查询
+  const [err, request] = await query('select id, username, avatar, registerDate, permissions, status, avatar_pendant from users where id=?', [user.id])
+  if (err) return res.send({ status: 5 })
+  res.send({ status: 1, userInfo: request[0] })
 })
 
 export default router
