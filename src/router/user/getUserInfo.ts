@@ -23,7 +23,7 @@ select
     avatar_pendant.name as avatar_pendant_name,
     avatar_pendant.url as avatar_pendant_url
 from users
-left join avatar_pendant on avatar_pendant.id = users.id
+left join avatar_pendant on avatar_pendant.id = users.avatar_pendant
 where users.id = ?
 `
 router.post('/', async (req, res) => {
