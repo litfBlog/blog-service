@@ -12,7 +12,7 @@ import { Router } from 'express'
 const router = Router()
 
 const sql = `
-SELECT
+select
     articles.id,
     articles.title,
     articles.cover,
@@ -22,19 +22,21 @@ SELECT
     articles.desc,
     author.avatar,
     author.username,
-    COUNT(DISTINCT likes.id, likes.like) AS likes_count,
-    COUNT(DISTINCT comments.id) AS comment_count,
-    is_liked.\`user_id\` AS liked
-FROM
-    \`articles\` AS articles
-LEFT JOIN \`likes\` likes ON articles.id = likes.articles_id AND likes.like=1
-LEFT JOIN \`users\` author ON articles.\`author\` = author.\`id\`
-LEFT JOIN \`likes\` is_liked ON articles.id = likes.articles_id AND is_liked.\`user_id\` = 1
-LEFT JOIN \`comment\` comments ON articles.id = comments.\`articles_id\`
-WHERE articles.status=1
-GROUP BY articles.id
-ORDER BY articles.create_date DESC
-LIMIT ?, ?
+    count(distinct likes.id, likes.like) as likes_count,
+    count(distinct comments.id)          as comment_count,
+    is_liked.user_id                     as liked,
+    avatar_pendant.name as avatar_pendant_name,
+    avatar_pendant.url as avatar_pendant_url
+from articles
+left join likes on articles.id = likes.articles_id and likes.like = 1
+left join users author on articles.author = author.id
+left join likes is_liked on articles.id = likes.articles_id and is_liked.user_id = 1
+left join comment comments on articles.id = comments.articles_id
+left join avatar_pendant on author.avatar_pendant = avatar_pendant.id
+where articles.status = 1
+group by articles.id, articles.create_date
+order by articles.create_date desc
+limit ?, ?
 `
 
 // 首页

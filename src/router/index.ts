@@ -14,9 +14,11 @@ const router = express.Router()
 import userLogin from './user/login'
 import getUserInfo from './user/getUserInfo'
 import getLiks from './operation/getLikes'
+import getAvatarPendant from './operation/getAvatarPendant'
 
 router.use('/login', userLogin)
 router.use('/getUserInfo', getUserInfo)
+router.use('/getAvatarPendant', getAvatarPendant)
 
 // 文章相关
 import init from './articles/init'

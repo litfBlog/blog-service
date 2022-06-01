@@ -55,18 +55,21 @@ class FormatCommentList {
 }
 
 const sql = `
-SELECT 
-  comment.*, 
-  users.avatar AS avatar,
-  users.username AS username,
-  COUNT(DISTINCT comment_like.id) AS likes_count
-FROM 
-  \`comment\` AS COMMENT
-LEFT JOIN users users ON users.id=user_id 
-LEFT JOIN comment_likes comment_like ON comment_like.\`comment_id\`=comment.id AND comment_like.like=1
-WHERE 
+select
+  comment.*,
+  users.avatar as avatar,
+  users.username as username,
+  count(distinct comment_like.id) as likes_count,
+  avatar_pendant.name as avatar_pendant_name,
+  avatar_pendant.url as avatar_pendant_url
+from
+  comment
+left join users on users.id=user_id
+left join comment_likes comment_like on comment_like.comment_id=comment.id and comment_like.like=1
+left join avatar_pendant on users.avatar_pendant = avatar_pendant.id
+where
   comment.articles_id=?
-GROUP BY comment.id
+group by comment.id
 `
 
 /**
@@ -87,20 +90,23 @@ router.post('/getList', async (req, res) => {
 })
 
 const detailedSql = `
-SELECT 
-  comment.*, 
-  users.avatar AS avatar,
-  users.username AS username,
-  COUNT(DISTINCT comment_like.id) AS likes_count,
-  IF(is_likes.like=1, 1, 0) AS liked
-FROM 
-  \`comment\` AS COMMENT
-LEFT JOIN users users ON users.id=user_id 
-LEFT JOIN comment_likes comment_like ON comment_like.\`comment_id\`=comment.id AND comment_like.like=1
-LEFT JOIN \`comment_likes\` is_likes ON  is_likes.\`comment_id\`=comment.\`id\` AND is_likes.\`user_id\`=?
-WHERE 
+select
+  comment.*,
+  users.avatar as avatar,
+  users.username as username,
+  count(distinct comment_like.id) as likes_count,
+  if(is_likes.like=1, 1, 0) as liked,
+  avatar_pendant.name as avatar_pendant_name,
+  avatar_pendant.url as avatar_pendant_url
+from
+  comment
+left join users on users.id=user_id
+left join comment_likes comment_like on comment_like.comment_id=comment.id and comment_like.like=1
+left join comment_likes is_likes on  is_likes.comment_id=comment.id and is_likes.user_id=?
+left join avatar_pendant on users.avatar_pendant = avatar_pendant.id
+where
   comment.articles_id=?
-GROUP BY comment.id
+group by comment.id
 `
 router.post('/detailed/getList', async (req, res) => {
   const { id } = req.body
