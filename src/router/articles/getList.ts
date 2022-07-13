@@ -33,7 +33,7 @@ left join users author on articles.author = author.id
 left join likes is_liked on articles.id = likes.articles_id and is_liked.user_id = 1
 left join comment comments on articles.id = comments.articles_id
 left join avatar_pendant on author.avatar_pendant = avatar_pendant.id
-where articles.status = 1
+where articles.status = 1 and articles.index_view=1
 group by articles.id, articles.create_date
 order by articles.create_date desc
 limit ?, ?
