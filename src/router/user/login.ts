@@ -1,12 +1,12 @@
 /*
-* @Author: litfa
-* @Date: 2022-03-01 10:52:48
+ * @Author: litfa
+ * @Date: 2022-03-01 10:52:48
  * @LastEditTime: 2022-05-02 20:06:05
  * @LastEditors: litfa
  * @Description: 登录相关api
  * @FilePath: /blog-service/src/router/user/login.ts
-* 
-*/
+ *
+ */
 import config from './../../config'
 import express from 'express'
 import getUnlimited from './../../utils/wx/getUnlimited'
@@ -24,11 +24,15 @@ router.post('/getCode', async (req, res) => {
   // 获取随机code
   const code = Date.now().toString() + Math.floor(Math.random() * 5000000000).toString()
   // 插入code
-  await db.query('insert into loginQueue set ?', { code, status: 0, date: Date.now() }, (err, results) => {
-    // 执行 SQL 语句失败
-    if (err) return res.send({ status: 5, message: err.message })
-    res.send({ status: 1, code })
-  })
+  await db.query(
+    'insert into loginQueue set ?',
+    { code, status: 0, date: Date.now() },
+    (err, results) => {
+      // 执行 SQL 语句失败
+      if (err) return res.send({ status: 5, message: err.message })
+      res.send({ status: 1, code })
+    }
+  )
 })
 
 /**
@@ -86,22 +90,25 @@ import code2Session from './../../utils/wx/code2Session'
  */
 router.post('/login', async (req, res) => {
   // 获取&处理参数
-  const { code, encryptedData, signature, iv } = req.body
+  const {
+    code
+    // encryptedData, signature, iv
+  } = req.body
   let { scene } = req.body
   scene = scene.toString()
 
   // 无效参数
-  if (!encryptedData || !iv || !code) return res.send({ status: 4 })
+  if (!code) return res.send({ status: 4 })
 
   // 解析用户信息
-  let data
+  // let data
   const { session_key: sessionKey, openid, unionid } = await code2Session(code)
-  try {
-    const pc = new WXBizDataCrypt(config.wx.appid, sessionKey)
-    data = pc.decryptData(encryptedData, iv)
-  } catch (e) {
-    return res.send({ status: 4 })
-  }
+  // try {
+  //   const pc = new WXBizDataCrypt(config.wx.appid, sessionKey)
+  //   data = pc.decryptData(encryptedData, iv)
+  // } catch (e) {
+  //   return res.send({ status: 4 })
+  // }
 
   // 部分场景值下还可以获取来源应用、公众号或小程序的appId。
   // https://developers.weixin.qq.com/miniprogram/dev/framework/app-service/scene.html
@@ -118,33 +125,45 @@ router.post('/login', async (req, res) => {
 
   // 查找是否有该用户
   let err, results
-  [err, results] = await query('select * from users where unionid=?', unionid)
+  ;[err, results] = await query('select * from users where unionid=?', unionid)
   // 找到该用户
   if (results?.length == 1) {
     // 小程序登录 不需要数据库操作 直接登录
     const token = jwt({ ...results[0] })
     if (scene.length == 4) {
-      logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`, `${results[0].id}小程序登录成功`)
+      logger.info(
+        `ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`,
+        `${results[0].id}小程序登录成功`
+      )
       return res.send({ status: 1, type: 'login', token })
     }
     // 网页登录 更新登录队列
     const status = await loginQueue.setStatus(scene, 2, results[0].id)
     if (status == -1) return res.send({ status: 5 })
-    logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`, `${results[0].id}小程序+网页登录成功`)
+    logger.info(
+      `ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`,
+      `${results[0].id}小程序+网页登录成功`
+    )
     return res.send({ status: 1, type: 'login', token })
   }
 
   // 若首次登录 自动注册
-  [err, results] = await query('insert into users set ?', {
+  const nickName = `用户 ${(openid as string).slice(-5)}`
+  const avatar =
+    '//static-1259453062.cos.ap-shanghai.myqcloud.com/user1/20230924130401-image.png'
+  ;[err, results] = await query('insert into users set ?', {
     openid,
     unionid,
-    username: data.nickName,
-    avatar: data.avatarUrl,
+    username: nickName,
+    avatar,
     registerDate: Date.now()
   })
   // SQL 语句执行成功，但影响行数不为 1
   if (err || results?.affectedRows !== 1) {
-    logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`, '登录失败')
+    logger.info(
+      `ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`,
+      '登录失败'
+    )
     return res.send({ status: 5, message: '登录失败，请稍后再试！' })
   }
   // 注册成功
@@ -152,21 +171,26 @@ router.post('/login', async (req, res) => {
     id: results.insertId,
     openid,
     unionid,
-    username: data.nickName,
-    avatar: data.avatarUrl,
+    username: nickName,
+    avatar,
     registerDate: Date.now()
   })
   // 小程序登录 不需要数据库操作 直接登录
   if (scene.length == 4) {
-    logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`, `${results.insertId}小程序注册成功`)
+    logger.info(
+      `ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`,
+      `${results.insertId}小程序注册成功`
+    )
     return res.send({ status: 1, type: 'register', token })
   }
   // 网页登录 更新登录队列
   const status = await loginQueue.setStatus(scene, 2, results.insertId)
   if (status == -1) return res.send({ status: 5 })
-  logger.info(`ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`, `${results.insertId}小程序+网页注册成功`)
+  logger.info(
+    `ip:${req.ip}  请求:${req.path}  user-agent:${req.headers['user-agent']}`,
+    `${results.insertId}小程序+网页注册成功`
+  )
   res.send({ status: 1, message: '注册成功！', type: 'register', token })
-
 })
 
 export default router

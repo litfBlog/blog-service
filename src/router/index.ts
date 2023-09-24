@@ -13,11 +13,13 @@ const router = express.Router()
 // 用户相关
 import userLogin from './user/login'
 import getUserInfo from './user/getUserInfo'
+import editUserInfo from './user/editUserInfo'
 import getLiks from './operation/getLikes'
 import getAvatarPendant from './operation/getAvatarPendant'
 
 router.use('/login', userLogin)
 router.use('/getUserInfo', getUserInfo)
+router.use('/editUserInfo', editUserInfo)
 router.use('/getAvatarPendant', getAvatarPendant)
 
 // 文章相关
